@@ -1,0 +1,27 @@
+.runtime/
+__pycache__/
+*.pyc
+
+# Local session data, browser captures, and machine-specific work logs
+.agent-logs/
+.playwright-cli/
+.DS_Store
+
+# Local environments and credentials
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.credentials.json
+auth.json
+
+# Machine-specific share config (hostname, account IDs, allowed email)
+deploy/cloudflare/
+
+# Rust build outputs (Cargo.lock remains tracked)
+rust-server/target/
+experiments/rust-detector/target/
+
+# Node worker dependencies
+node_modules/

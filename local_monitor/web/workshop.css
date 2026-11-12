@@ -1,0 +1,709 @@
+/* A single landscape, with stable positions and provider-specific travelling rhythms. */
+main{height:auto;min-height:100dvh}
+.workshop-panel{margin-top:-13px;flex:none;border:1px solid var(--line);border-radius:14px;background:var(--paper);overflow:hidden}
+.workshop-grid{--journey-height:138px;--sky:#eaf3ee;--mountain:#d7e4dc;--hill:#c0d5c5;--road:#e6deca;position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0 5%}
+.journey-landscape{position:absolute;inset:0 0 auto;height:var(--journey-height);overflow:hidden;pointer-events:none;background:linear-gradient(var(--sky),var(--paper))}
+.journey-mountains{position:absolute;bottom:20px;left:0;width:100%;height:75px;background:var(--mountain);clip-path:polygon(0 70%,12% 25%,21% 58%,38% 10%,49% 60%,64% 30%,73% 50%,88% 0,100% 60%,100% 100%,0 100%)}
+.journey-hills{position:absolute;bottom:15px;left:-5%;width:110%;height:38px;background:var(--hill);border-radius:50% 60% 0 0}
+.journey-road{position:absolute;bottom:0;left:0;width:100%;height:22px;border-top:2px solid color-mix(in srgb,var(--hill),var(--ink) 12%);background:radial-gradient(ellipse,var(--hill) 0 40%,transparent 50%) 0 6px/64px 4px repeat-x,var(--road);animation:journey-road 8s linear infinite;animation-play-state:paused}
+.journey-moving .journey-road{animation-play-state:running}
+.journey-shared-light{position:absolute;bottom:3px;left:0;width:100%;height:10px;background:linear-gradient(90deg,transparent,#a2d3bc,#ecd19d,#c7b1e8,transparent);opacity:0}
+.journey-celebrating .journey-shared-light{animation:journey-glow 1.2s ease-out}
+.workshop-room{--ws-accent:#4b9f91;--ws-body:#496874;--ws-hand:#83d9c3;--ws-shoe:#2d424f;--ws-cycle:1s;--ws-stride:18deg;--ws-hop:-1px;--ws-lean:2deg;position:relative;min-width:0;text-align:center;padding:0 3px 8px}
+[data-workshop-provider=claude]{--ws-accent:#c4785d;--ws-body:#ca805c;--ws-hand:#efb18c;--ws-shoe:#715244}
+[data-workshop-provider=antigravity]{--ws-accent:#9372c5;--ws-body:#a087c9;--ws-hand:#d9c9f0;--ws-shoe:#6d5a91}
+.workshop-scene{display:block;position:relative;border:0!important;background:none!important;padding:0;margin:0 auto;width:144px;height:var(--journey-height);max-width:100%}
+.workshop-scene svg{position:absolute;bottom:3px;left:0;width:100%;height:120px;overflow:visible}
+.workshop-name{display:block;margin:0 auto;border:0!important;background:none!important;color:var(--ink);font-size:14px;min-height:44px;padding:4px 2px;max-width:100%}
+.workshop-metrics{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:0 10px}
+.workshop-metrics button{display:flex;align-items:baseline;gap:6px;min-height:44px;max-width:100%;border:0;background:transparent;padding:4px 1px;color:var(--ink)}
+.workshop-metrics span{font-size:11px;color:var(--muted)}.workshop-metrics b{font-size:22px;font-weight:400;overflow-wrap:anywhere}.workshop-done b{font-size:18px}
+.workshop-status{min-height:24px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;font-size:11px;color:var(--muted);line-height:1.5}
+.workshop-attention{font-size:11px;min-height:44px;padding:4px 6px}.workshop-attention[hidden]{display:none}
+.workshop-footer{display:flex;align-items:center;gap:12px;padding:4px 12px;border-top:1px solid var(--line)}
+.workshop-quality{flex:1;min-width:0;font-size:11px;color:var(--muted);margin:0;line-height:1.5}
+#workshop-open{flex:none;min-height:44px;padding:8px 12px}
+.workshop-cue{position:absolute;right:0;top:30px;color:var(--ink);background:var(--paper);font-size:12px;border-radius:4px;padding:3px 5px;pointer-events:none}.workshop-cue:empty{display:none}
+.ws-shadow{fill:var(--ws-shoe);opacity:.15}.ws-body{fill:var(--ws-body)}.ws-hand{fill:var(--ws-hand)}.ws-leg{fill:var(--ws-shoe);transform-origin:48px 63px}.ws-arm{transform-origin:51px 50px}.ws-person{transform-origin:48px 72px}
+.ws-backpack{fill:#8e6e50;transform-origin:34px 49px}[data-workshop-provider=codex] .ws-backpack{fill:#42616a}[data-workshop-provider=antigravity] .ws-backpack{fill:#6d5599}
+.ws-closed-eyes{fill:var(--ws-hand);display:none}.ws-map,.ws-sleep,.ws-bubble,.ws-thruster,.ws-dust{display:none}.ws-sleep{fill:var(--muted);font:10px monospace}.ws-thruster{fill:#87dfe3}.ws-dust{fill:var(--ws-accent);opacity:.5}
+[data-gait=walk],[data-gait=jog],[data-gait=run]{--ws-cycle:1s}
+[data-gait=jog]{--ws-cycle:.65s;--ws-stride:30deg;--ws-hop:-3px;--ws-lean:6deg}
+[data-gait=run]{--ws-cycle:.46s;--ws-stride:42deg;--ws-hop:-5px;--ws-lean:11deg}
+[data-gait=walk] .ws-person,[data-gait=jog] .ws-person,[data-gait=run] .ws-person{animation:journey-step var(--ws-cycle) ease-in-out infinite}
+:is([data-gait=walk],[data-gait=jog],[data-gait=run]) .ws-leg{animation:journey-leg var(--ws-cycle) ease-in-out infinite alternate}
+:is([data-gait=walk],[data-gait=jog],[data-gait=run]) .ws-leg-back{animation-direction:alternate-reverse}
+:is([data-gait=walk],[data-gait=jog],[data-gait=run]) .ws-arm{animation:journey-arm var(--ws-cycle) ease-in-out infinite alternate}
+[data-workshop-provider=codex] .ws-person{animation-timing-function:steps(3,end)}
+[data-workshop-provider=claude]:is([data-gait=jog],[data-gait=run]) .ws-backpack{animation:journey-bag var(--ws-cycle) ease-in-out infinite}
+[data-gait=run] .ws-dust{display:block;animation:journey-dust 1s ease-out infinite}
+[data-workshop-provider=antigravity] .ws-person{animation:journey-hover 3s ease-in-out infinite}
+[data-workshop-provider=antigravity] .ws-leg,[data-workshop-provider=antigravity] .ws-arm{animation:none}
+[data-workshop-provider=antigravity]:is([data-gait=walk],[data-gait=jog],[data-gait=run]) .ws-thruster{display:block;transform-origin:30px 60px;animation:journey-jet 1.6s ease-in-out infinite}
+[data-workshop-provider=antigravity][data-gait=run] .ws-thruster{transform:scaleX(1.5)}
+[data-pose=sleeping] .ws-closed-eyes,[data-pose=sleeping] .ws-sleep{display:block}[data-pose=sleeping] .ws-eyes{display:none}
+[data-pose=sleeping]:not([data-workshop-provider=antigravity]) .ws-person{transform:translateY(8px) scaleY(.88)}
+[data-pose=sleeping] .ws-leg{transform:rotate(-65deg)}
+[data-pose=waiting] .ws-map{display:block}[data-pose=waiting] .ws-arm{transform:rotate(-20deg)}
+:is([data-pose=waiting],[data-pose=failed],[data-pose=unknown],[data-pose=loading],.has-attention) .ws-bubble{display:block}
+[data-gait=still] .ws-person{animation:none}.is-stale .workshop-scene,[data-pose=unknown] .workshop-scene,[data-pose=loading] .workshop-scene{filter:saturate(.3);opacity:.65}
+.ws-count-item{opacity:0;transition:opacity .5s ease;pointer-events:none}.ws-count-item.is-filled{opacity:1}.ws-footlight{fill:var(--ws-accent);filter:drop-shadow(0 0 2px var(--ws-accent))}
+.ws-count-overflow{font-family:"NeoDunggeunmo",monospace;font-size:7px;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:1px}
+.ws-arrival{fill:none;stroke:var(--ws-accent);stroke-width:2;opacity:0;transform-origin:49px 74px}.is-packing .ws-arrival{animation:journey-arrival 1.2s ease-out}
+@keyframes journey-road{to{background-position:-64px 6px}}
+@keyframes journey-step{0%,100%{transform:rotate(var(--ws-lean))}50%{transform:translateY(var(--ws-hop)) rotate(var(--ws-lean))}}
+@keyframes journey-leg{from{transform:rotate(calc(-1 * var(--ws-stride)))}to{transform:rotate(var(--ws-stride))}}
+@keyframes journey-arm{from{transform:rotate(var(--ws-stride))}to{transform:rotate(calc(-1 * var(--ws-stride)))}}
+@keyframes journey-bag{50%{transform:translateY(-2px) rotate(-4deg)}}
+@keyframes journey-hover{0%,100%{transform:translateY(-3px) rotate(var(--ws-lean))}50%{transform:translateY(-7px) rotate(var(--ws-lean))}}
+@keyframes journey-jet{50%{opacity:.45}}
+@keyframes journey-dust{from{opacity:.6;transform:translateX(0)}to{opacity:0;transform:translateX(-9px)}}
+@keyframes journey-arrival{0%{opacity:0;transform:scale(.4)}30%{opacity:.8}100%{opacity:0;transform:scale(1.5)}}
+@keyframes journey-glow{40%{opacity:.6}100%{opacity:0}}
+[data-theme=dark] .workshop-grid,[data-theme=night] .workshop-grid,[data-theme=real] .workshop-grid{--sky:#252f3c;--mountain:#34434d;--hill:#435854;--road:#424944}
+[data-theme=rpg] .workshop-panel,[data-theme=night] .workshop-panel,[data-theme=real] .workshop-panel,[data-theme=cloud] .workshop-panel{border-radius:0;border-width:2px}
+.workshop-paused *,.journey-stale *{animation-play-state:paused!important}
+@media(max-width:599px){
+ .workshop-grid{--journey-height:108px;padding:0 3px}.workshop-room{padding:0 1px 6px}.workshop-scene{width:96px}.workshop-scene svg{height:80px;bottom:6px}.workshop-name{font-size:11px;letter-spacing:-.4px}.workshop-metrics{gap:0}.workshop-metrics button{width:100%;justify-content:center;gap:4px}.workshop-metrics span{font-size:10px}.workshop-metrics b{font-size:18px}.workshop-done span{max-width:55px}.workshop-status{font-size:10px;padding:0 2px}.workshop-note{overflow-wrap:anywhere}.workshop-cue{font-size:10px;top:25px}.workshop-footer{gap:6px;padding:4px 8px}.workshop-quality{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.workshop-grid *{animation:none!important;transition:none!important}.ws-dust{display:none}}
+#workshop-dialog{width:min(calc(100% - 32px),1100px);max-width:none;max-height:85dvh;box-sizing:border-box;padding:20px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:14px}
+#workshop-dialog::backdrop{background:#12162699;backdrop-filter:blur(3px)}
+.workshop-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.workshop-dialog-heading h2{margin:0;font-size:20px}.workshop-dialog-heading button{min-height:44px;min-width:44px}
+#workshop-dialog .sessions-panel{margin:0;border:0;box-shadow:none;padding:0;overflow:visible}
+#workshop-dialog .session-list{max-height:50dvh;min-height:100px;overflow:auto}
+.workshop-views{display:flex;gap:8px;margin:14px 0}.workshop-views button{min-height:44px;padding:8px 12px}
+#workshop-dialog .section-heading{flex-wrap:wrap}#workshop-dialog .summary-counts button,#workshop-dialog .provider-filters button,#workshop-dialog .toolbar button{min-height:44px}
+#workshop-dialog .toolbar{flex-wrap:wrap}#workshop-dialog #search{min-width:120px;flex:1 1 180px}
+#workshop-dialog .selected{outline:1px solid currentColor;outline-offset:-1px}
+#workshop-journal-note{font-size:12px;color:var(--muted);line-height:1.6}
+#workshop-dialog .section-heading{height:auto;min-height:43px}#workshop-dialog .session-time{overflow-wrap:anywhere}#workshop-dialog #search,#workshop-dialog #details-toggle{min-height:44px}
+@media(max-width:599px){#workshop-dialog{margin:0;width:100%;max-height:100dvh;height:100dvh;border-radius:0;padding:12px}#workshop-dialog .session-list{max-height:60dvh}#workshop-dialog .section-heading{gap:8px}#workshop-dialog .session{min-width:0}.workshop-views{flex-wrap:wrap}}
+@media(max-width:650px){#workshop-dialog .session[data-event-id]{grid-template-columns:minmax(0,1fr) 78px;height:auto;min-height:64px}#workshop-dialog .session[data-event-id] .session-time{display:block;grid-column:2;font-size:10px}#workshop-dialog .session[data-event-id] .session-main{grid-row:1/3}#workshop-dialog .session[data-event-id] .session-meta{white-space:normal;overflow-wrap:anywhere}}
+/* Stationary readouts above moving characters; no visible heading. */
+.journey-overlay{position:absolute;top:0;left:50%;transform:translateX(-50%);width:112px;max-width:100%;display:flex;align-items:center;flex-direction:column;z-index:1}
+.journey-hp{width:100%;min-height:32px;display:flex;align-items:center;gap:5px;border:0!important;background:transparent!important;padding:4px 3px;color:var(--ink)}
+.journey-hp-track{position:relative;display:block;flex:1;min-width:24px;height:8px;border:1px solid color-mix(in srgb,var(--ws-accent),var(--ink) 25%);background:var(--paper);border-radius:3px;overflow:hidden}
+.journey-hp-fill{display:block;height:100%;background:var(--ws-accent);transition:width .4s ease}
+.journey-hp-text{font-size:12px;line-height:16px;white-space:nowrap;min-width:26px;text-align:right;padding:2px 4px;border-radius:3px;box-sizing:border-box;flex-shrink:0}
+.journey-hp.is-unknown .journey-hp-track{border-style:dashed;opacity:.65}
+.journey-task-badge{position:relative;min-height:24px;min-width:30px;max-width:100%;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink);padding:2px 5px;font-size:11px;line-height:16px;overflow-wrap:anywhere}
+.journey-task-badge[hidden]{display:none}.journey-task-badge.has-dot:after{content:'';position:absolute;right:-3px;top:-3px;width:6px;height:6px;border-radius:50%;background:#d79b38;border:1px solid var(--paper)}
+.workshop-scene svg{height:108px}.workshop-cue{top:65px;right:0}
+@media(max-width:599px){.journey-overlay{width:90px}.journey-hp{gap:3px;padding-inline:1px}.journey-hp-text{font-size:11px;padding-inline:3px}.journey-task-badge{font-size:10px;min-height:22px;line-height:16px}.workshop-scene svg{height:76px}.workshop-cue{top:60px}}
+
+/* A luggage tag hangs beside the backpack; its text stays still for legibility. */
+.journey-traveller{position:relative;width:144px;max-width:100%;height:var(--journey-height);margin:0 auto}
+.journey-task-badge{position:absolute;right:calc(50% + 27px);bottom:23px;min-width:25px;min-height:26px;max-width:58px;padding:4px 5px 3px;border:1px solid #a68c62;border-radius:3px 7px 3px 3px;background:#fff0cc;color:#493d2d;font-size:12px;line-height:16px;box-shadow:0 1px 2px #28353a18;z-index:2}
+.journey-task-badge:before{content:'';position:absolute;right:-9px;top:-7px;width:13px;height:10px;border:1px solid var(--ws-accent);border-radius:50%;transform:rotate(-38deg);pointer-events:none}
+.journey-task-badge:not(.has-dot):after{content:'';position:absolute;right:3px;top:3px;width:3px;height:3px;border-radius:50%;background:#b49b72}
+.journey-task-badge:focus-visible{outline:2px solid var(--ws-accent);outline-offset:3px}
+@media(max-width:599px){.journey-traveller{width:96px}.journey-task-badge{right:calc(50% + 17px);bottom:19px;min-width:23px;min-height:25px;max-width:38px;padding:4px 3px 2px;font-size:11px;line-height:16px}.journey-task-badge:before{right:-8px;width:11px}}
+
+/* Anchor HP to the traveller, keeping clearance through every gait cycle. */
+.journey-traveller{--hp-anchor:81px;--hp-gait:0px}
+.journey-overlay{top:auto;bottom:calc(var(--hp-anchor) + var(--hp-gait))}
+[data-workshop-provider=claude] .journey-traveller{--hp-anchor:86px}
+[data-workshop-provider=antigravity] .journey-traveller{--hp-anchor:92px}
+[data-gait=jog] .journey-traveller{--hp-gait:3px}
+[data-gait=run] .journey-traveller{--hp-gait:7px}
+[data-pose=sleeping]:not([data-workshop-provider=antigravity]) .journey-traveller{--hp-gait:-19px}
+[data-workshop-provider=antigravity] .journey-traveller{--hp-gait:0px}
+[data-workshop-provider=antigravity][data-gait=run] .journey-traveller{--hp-gait:7px}
+[data-workshop-provider=antigravity][data-gait=still] .journey-traveller{--hp-gait:-10px}
+@media(max-width:599px){
+ .journey-traveller{--hp-anchor:61px}
+ [data-workshop-provider=claude] .journey-traveller{--hp-anchor:65px}
+ [data-workshop-provider=antigravity] .journey-traveller{--hp-anchor:69px}
+ [data-gait=jog]:not([data-workshop-provider=antigravity]) .journey-traveller{--hp-gait:2px}
+ [data-gait=run]:not([data-workshop-provider=antigravity]) .journey-traveller{--hp-gait:5px}
+ [data-pose=sleeping]:not([data-workshop-provider=antigravity]) .journey-traveller{--hp-gait:-15px}
+ [data-workshop-provider=antigravity][data-gait=still] .journey-traveller{--hp-gait:-8px}
+}
+/* Shared local weather and daylight; UI colors and task state remain independent. */
+[data-sky] .workshop-grid{--sky:#dceef0;--sky-low:#f5f1d8;--mountain:#c0d6cf;--hill:#a6c7ac;--road:#e3d8bd}
+[data-sky=dawn] .workshop-grid{--sky:#d7c6df;--sky-low:#f4d6b2;--mountain:#bdadca;--hill:#a9b9b0;--road:#d8c8b5}
+[data-sky=dusk] .workshop-grid{--sky:#b6abc9;--sky-low:#f0bd97;--mountain:#a195b1;--hill:#879e99;--road:#bcb2a3}
+[data-sky=night] .workshop-grid{--sky:#202d48;--sky-low:#3c4861;--mountain:#37445c;--hill:#475d61;--road:#55656a}
+[data-sky] .journey-landscape{background:linear-gradient(var(--sky),var(--sky-low))}
+.journey-orb{position:absolute;left:11%;top:13px;width:16px;height:16px;border-radius:50%;background:#fff2b8;box-shadow:0 0 18px #fff2b844;opacity:.85}
+[data-sky=night] .journey-orb{background:#e5e8cd;box-shadow:inset -5px -2px 0 var(--sky);width:14px;height:14px;left:88%}
+[data-sky=dusk] .journey-orb,[data-sky=dawn] .journey-orb{top:37px;background:#ffe3b1}
+.journey-stars{display:none;position:absolute;inset:0;background:radial-gradient(circle,#dde7ef 0 1px,transparent 1.5px) 9px 6px/113px 39px,radial-gradient(circle,#fff2c9 0 1px,transparent 1.5px) 42px 16px/181px 47px;opacity:.55}
+[data-sky=night] .journey-stars{display:block}
+:is([data-journey-weather=cloudy],[data-journey-weather=rain],[data-journey-weather=storm],[data-journey-weather=snow],[data-journey-weather=fog]) .journey-orb{opacity:.15}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) .journey-road{background-color:#93abae}
+[data-sky=night]:is([data-journey-weather=rain],[data-journey-weather=storm]) .journey-road{background-color:#455966}
+.journey-puddles{display:none;position:absolute;bottom:4px;width:100%;height:9px;background:radial-gradient(ellipse,#c4e1e5aa 0 60%,transparent 65%) 20px 0/127px 6px repeat-x}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) .journey-puddles{display:block}
+.journey-precipitation{display:none;position:absolute;inset:-35px -12px;opacity:.36;pointer-events:none}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) .journey-precipitation{display:block;background:linear-gradient(110deg,transparent 46%,#98bdca 47% 50%,transparent 51%) 0 0/31px 35px;animation:journey-rain 1.2s linear infinite}
+[data-journey-weather=snow] .journey-precipitation{display:block;opacity:.7;background:radial-gradient(circle,#fff 0 1.5px,transparent 2px) 0 0/53px 37px;animation:journey-snow 7s linear infinite}
+[data-journey-weather=snow] .journey-road{border-top:3px solid #e6eceb;background-color:#c5d4d5}
+[data-journey-weather=storm] .journey-mountains{filter:brightness(.75)}
+.journey-fog{display:none;position:absolute;inset:25px -10% 16px;background:linear-gradient(transparent,#dce5e7aa,transparent);filter:blur(6px);animation:journey-mist 14s ease-in-out infinite alternate}
+[data-journey-weather=fog] .journey-fog{display:block}
+[data-journey-weather=fog] .journey-mountains{opacity:.3;filter:blur(3px)}
+.ws-rainwear,.ws-scarf,.ws-earmuffs,.ws-rain-hat,.ws-rain-shield,.ws-lantern,.ws-blanket{display:none;pointer-events:none}
+.ws-rain-coat{fill:var(--ws-accent);opacity:.85}.ws-pack-cover{fill:#d4bd72}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) [data-workshop-provider=claude] .ws-rainwear{display:block}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) [data-workshop-provider=claude] .ws-rain-hat{display:block;fill:#d8b966}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) [data-workshop-provider=codex] .ws-rain-hat{display:block;fill:#81c6bc}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) [data-workshop-provider=antigravity] .ws-rain-shield{display:block}
+[data-journey-weather=snow] .ws-scarf{display:block}
+[data-journey-weather=snow] [data-workshop-provider=claude] .ws-earmuffs{display:block}
+[data-journey-weather=snow] [data-workshop-provider=antigravity] .ws-rain-shield{display:block;stroke:#d1c0ec;stroke-width:3px;fill:#a88ac9;fill-opacity:.15}
+:is([data-sky=dusk],[data-sky=night],[data-journey-weather=fog]) .ws-lantern{display:block}
+[data-sky=night] [data-pose=sleeping] .ws-blanket{display:block}
+[data-sky=night] [data-workshop-provider=codex] .ws-eyes{filter:drop-shadow(0 0 2px #80e4c9)}
+[data-sky=night] .ws-thruster{filter:drop-shadow(0 0 3px #87dfe3)}
+[data-sky=night] .ws-footlight{filter:drop-shadow(0 0 3px var(--ws-accent));fill:#dcf2da}
+@keyframes journey-rain{to{background-position:-8px 35px}}
+@keyframes journey-snow{to{background-position:16px 37px}}
+@keyframes journey-mist{to{transform:translateX(5%)}}
+@media(prefers-reduced-motion:reduce){.journey-precipitation,.journey-fog{animation:none!important}}
+/* Keep HP labels readable on the night landscape, regardless of dashboard theme. */
+.workshop-grid{--hp-label-ink:#203344;--hp-label-paper:rgba(249,252,249,.94)}
+[data-sky=night] .workshop-grid{--hp-label-ink:#eef3fa;--hp-label-paper:rgba(26,39,58,.94)}
+.workshop-grid .journey-hp .journey-hp-text{color:var(--hp-label-ink);background:var(--hp-label-paper);text-shadow:none}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) .journey-precipitation{opacity:.23;background-size:61px 51px;animation-name:journey-soft-rain}
+:is([data-journey-weather=rain],[data-journey-weather=storm]) .ws-dust{fill:#b5dbe4}
+[data-journey-weather=snow] .ws-dust{fill:#fff}
+@keyframes journey-soft-rain{to{background-position:-8px 51px}}
+
+/* Weather colors shared by independently drifting cloud silhouettes. */
+.workshop-grid{--journey-cloud:#fff;--journey-cloud-opacity:.45}
+[data-sky=night] .workshop-grid{--journey-cloud:#b6c4d5;--journey-cloud-opacity:.16}
+:is([data-journey-weather=cloudy],[data-journey-weather=rain],[data-journey-weather=storm],[data-journey-weather=snow]) .workshop-grid{--journey-cloud:#9cabb9;--journey-cloud-opacity:.48}
+[data-journey-weather=fog] .workshop-grid{--journey-cloud-opacity:.2}
+.journey-landscape .journey-orb{left:var(--journey-orb-x,50%);top:var(--journey-orb-y,10px);transform:translateX(-50%)}
+[data-orbit-motion=steady] .journey-orb{transition:left 29s linear,top 29s linear}
+.workshop-paused .journey-orb{transition:none}
+@media(prefers-reduced-motion:reduce){.journey-landscape .journey-cloud{animation:none!important}.journey-landscape .journey-orb{transition:none!important}}
+
+/* Provider-specific vehicles share one stable driver/readout position. */
+.ride-body{display:none}
+[data-vehicle="1"] .ride-tier-1,[data-vehicle="2"] .ride-tier-2,[data-vehicle="3"] .ride-tier-3{display:block}
+.workshop-room[data-vehicle] .ws-person,.workshop-room[data-vehicle] .ws-arm,.workshop-room[data-vehicle] .ws-leg,.workshop-room[data-vehicle] .ws-backpack{animation:none;transform:none}
+.workshop-room[data-vehicle] .ws-thruster,.workshop-room[data-vehicle] .ws-dust{display:none}
+.workshop-room[data-vehicle] .ws-leg{visibility:hidden}
+.workshop-room[data-vehicle] .ws-arm{transform:rotate(-12deg)}
+.workshop-room[data-vehicle] .ws-person{transform:translateY(2px)}
+.ride-rig{transform-origin:48px 68px}
+[data-riding=true] .ride-rig{animation:ride-suspension 1.4s ease-in-out infinite}
+[data-riding=true][data-vehicle="3"] .ride-rig,[data-riding=true][data-workshop-provider=antigravity] .ride-rig{animation:ride-hover 2.4s ease-in-out infinite}
+[data-riding=true] .ride-wheel{animation:ride-wheel 1.4s linear infinite}
+[data-riding=true] .ride-propeller{animation:ride-wheel .5s linear infinite}
+.ride-jet,.ride-boost,.ride-warning{display:none}
+[data-riding=true] .ride-jet{display:block;animation:ride-thrust 1.4s ease-in-out infinite}
+:is([data-pose=waiting],[data-pose=failed],.has-attention) .ride-warning{display:block}
+[data-vehicle] .ws-map{display:none}
+[data-vehicle].is-packing .ride-rig{animation:ride-arrival 1.2s ease-out}
+[data-vehicle].is-packing .ride-boost{display:block}
+[data-vehicle] .journey-task-badge{right:5px;bottom:8px;max-width:55px;min-width:27px;min-height:24px;padding:2px 5px;border:2px solid var(--ws-accent);border-radius:3px;background:#f6f3dc;color:#263b48;box-shadow:0 2px 0 #263b4822;font-size:12px}
+[data-vehicle] .journey-task-badge:before,[data-vehicle] .journey-task-badge:not(.has-dot):after{display:none}
+.workshop-room[data-vehicle] .journey-traveller{--hp-gait:0px;--hp-anchor:81px}
+.workshop-room[data-vehicle][data-workshop-provider=claude] .journey-traveller{--hp-anchor:86px}
+.workshop-room[data-vehicle][data-workshop-provider=antigravity] .journey-traveller{--hp-anchor:85px}
+@keyframes ride-suspension{50%{transform:translateY(-1px)}}
+@keyframes ride-hover{50%{transform:translateY(-3px)}}
+@keyframes ride-wheel{to{transform:rotate(360deg)}}
+@keyframes ride-thrust{50%{opacity:.5}}
+@keyframes ride-arrival{0%,100%{transform:translateX(0)}35%{transform:translateX(3px) translateY(-2px)}}
+@media(max-width:599px){
+ [data-vehicle] .journey-task-badge{right:0;bottom:8px;max-width:38px;min-width:23px;font-size:11px;padding:2px 3px}
+ .workshop-room[data-vehicle] .journey-traveller{--hp-anchor:61px}
+ .workshop-room[data-vehicle][data-workshop-provider=claude] .journey-traveller{--hp-anchor:65px}
+ .workshop-room[data-vehicle][data-workshop-provider=antigravity] .journey-traveller{--hp-anchor:64px}
+}
+@media(prefers-reduced-motion:reduce){.ride-jet{opacity:.65}.ride-boost{display:none!important}}
+
+.ride-wheel,.ride-propeller{transform-box:fill-box;transform-origin:center}
+
+/* Authored irregular scenery: no short repeated cloud or star tiles. */
+.journey-landscape .journey-clouds{position:absolute;inset:0;opacity:var(--journey-cloud-opacity);pointer-events:none}
+.journey-landscape .journey-clouds-far{opacity:calc(var(--journey-cloud-opacity) * .55)}
+.journey-cloud{position:absolute;left:0;top:var(--cloud-top);width:100%;height:var(--cloud-height);opacity:var(--cloud-alpha);transform:translateX(var(--cloud-rest));animation:journey-cloud-drift var(--cloud-duration) linear var(--cloud-delay) infinite}
+.journey-cloud svg{display:block;width:var(--cloud-size);height:100%;fill:var(--journey-cloud);overflow:visible}
+.journey-clouds-far .journey-cloud:nth-child(1){--cloud-size:clamp(36px,6vw,64px);--cloud-height:15px;--cloud-top:9px;--cloud-alpha:.75;--cloud-duration:239s;--cloud-delay:-199s;--cloud-rest:9%}
+.journey-clouds-far .journey-cloud:nth-child(2){--cloud-size:clamp(51px,8vw,86px);--cloud-height:13px;--cloud-top:24px;--cloud-alpha:.9;--cloud-duration:307s;--cloud-delay:-144s;--cloud-rest:51%}
+.journey-clouds-far .journey-cloud:nth-child(3){--cloud-size:clamp(32px,5vw,53px);--cloud-height:11px;--cloud-top:6px;--cloud-alpha:.6;--cloud-duration:269s;--cloud-delay:-33s;--cloud-rest:83%}
+.journey-clouds-near .journey-cloud:nth-child(1){--cloud-size:clamp(53px,10vw,108px);--cloud-height:27px;--cloud-top:14px;--cloud-alpha:.85;--cloud-duration:151s;--cloud-delay:-112s;--cloud-rest:18%}
+.journey-clouds-near .journey-cloud:nth-child(2){--cloud-size:clamp(38px,7vw,75px);--cloud-height:21px;--cloud-top:3px;--cloud-alpha:.65;--cloud-duration:173s;--cloud-delay:-86s;--cloud-rest:40%}
+.journey-clouds-near .journey-cloud:nth-child(3){--cloud-size:clamp(60px,12vw,128px);--cloud-height:23px;--cloud-top:31px;--cloud-alpha:.72;--cloud-duration:211s;--cloud-delay:-63s;--cloud-rest:65%}
+.journey-clouds-near .journey-cloud:nth-child(4){--cloud-size:clamp(42px,8vw,90px);--cloud-height:29px;--cloud-top:8px;--cloud-alpha:.9;--cloud-duration:117s;--cloud-delay:-9s;--cloud-rest:88%}
+@keyframes journey-cloud-drift{from{transform:translateX(100%)}to{transform:translateX(calc(-1 * var(--cloud-size)))}}
+.journey-mountains{clip-path:none;background:none}
+.journey-hills{left:0;width:100%;border-radius:0;background:none;height:40px}
+.journey-mountains svg,.journey-hills svg{display:block;width:100%;height:100%}
+.journey-mountains path{fill:var(--mountain)}.journey-hills path{fill:var(--hill)}
+.journey-stars{background:radial-gradient(circle,#dde7ef 0 1px,transparent 1.5px) 7% 19%/4px 4px,radial-gradient(circle,#fff2c9 0 1px,transparent 1.5px) 21% 7%/3px 3px,radial-gradient(circle,#dde7ef 0 .7px,transparent 1.2px) 33% 34%/3px 3px,radial-gradient(circle,#fff2c9 0 1px,transparent 1.5px) 47% 12%/4px 4px,radial-gradient(circle,#dde7ef 0 .7px,transparent 1.2px) 58% 27%/3px 3px,radial-gradient(circle,#dde7ef 0 .7px,transparent 1.2px) 69% 6%/3px 3px,radial-gradient(circle,#fff2c9 0 1px,transparent 1.5px) 82% 21%/4px 4px,radial-gradient(circle,#dde7ef 0 .7px,transparent 1.2px) 93% 9%/3px 3px;background-repeat:no-repeat}
+.journey-road{background-image:radial-gradient(ellipse at 27px 8px,var(--hill) 0 2px,transparent 3px),radial-gradient(ellipse at 139px 15px,var(--hill) 0 1px,transparent 2px),radial-gradient(ellipse at 292px 6px,var(--hill) 0 3px,transparent 4px),radial-gradient(ellipse at 337px 17px,var(--hill) 0 1px,transparent 2px),radial-gradient(ellipse at 501px 11px,var(--hill) 0 2px,transparent 3px);background-size:587px 22px;background-position:0 0;animation-name:journey-road-natural;animation-duration:73s}
+@keyframes journey-road-natural{to{background-position:-587px 0}}
+@media(max-width:599px){.journey-clouds-far .journey-cloud:nth-child(3),.journey-clouds-near .journey-cloud:nth-child(2){display:none}.journey-clouds-near .journey-cloud:nth-child(3){--cloud-top:24px;--cloud-height:18px}}
+
+/* A stationary arrival sign shares the vehicle edge with the active plate. */
+.journey-done-badge{position:absolute;left:0;bottom:8px;z-index:2;min-height:24px;min-width:29px;max-width:55px;padding:2px 4px;border:2px solid #4e8871;border-radius:3px;background:#edf6e9;color:#254f3d;font-size:12px;line-height:16px;overflow-wrap:anywhere;box-shadow:0 2px 0 #263b4822}
+.journey-done-badge:focus-visible{outline:2px solid var(--ws-accent);outline-offset:3px}
+.journey-done-badge.is-stale{border-style:dashed}
+@media(max-width:599px){.journey-done-badge{max-width:43px;min-width:25px;padding:2px 3px;font-size:11px}}
+
+/* Provider identity and a compact preview share the existing task completion model. */
+.workshop-grid{--journey-height:154px}
+.journey-overlay .workshop-name{min-height:26px;padding:2px 5px;font-size:12px;line-height:20px;white-space:nowrap;color:var(--hp-label-ink);background:var(--hp-label-paper)!important;border-radius:4px}
+.workshop-recent{margin:8px auto 0;max-width:340px;text-align:left;border-top:1px solid var(--line);padding:5px 8px 0}
+.workshop-recent-list{list-style:none;margin:0;padding:0}
+.workshop-recent-row{display:flex;align-items:center;gap:8px;min-height:30px;font-size:12px;line-height:1.5}
+.workshop-recent-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.workshop-recent-time{flex-shrink:0;color:var(--muted);font-size:11px;white-space:nowrap}
+.workshop-recent-empty{margin:5px 0;color:var(--muted);font-size:11px;line-height:1.6;text-align:center}
+.workshop-recent-more{display:block;min-height:44px;border:0;background:transparent;color:var(--muted);font-size:11px;margin:auto;padding:5px}
+.workshop-recent [hidden]{display:none!important}
+@media(max-width:599px){
+ .workshop-grid{--journey-height:124px}
+ .journey-overlay .workshop-name{font-size:10px;padding-inline:2px}
+ .workshop-recent{padding-inline:3px;margin-top:6px}
+ .workshop-recent-row{display:block;padding:4px 0;font-size:11px}
+ .workshop-recent-title{display:block}
+ .workshop-recent-time{display:block;font-size:10px}
+ .workshop-recent-more,.workshop-recent-empty{font-size:10px}
+}
+
+/* Keep the completion list immediately beneath the travellers. */
+.workshop-recent{margin-top:4px;border-top:0;padding-top:0}
+.workshop-status{margin-top:4px}
+.workshop-status[hidden],.workshop-note[hidden]{display:none!important}
+
+.workshop-recent-main{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
+.workshop-folder{flex:0 1 auto;max-width:40%;min-width:0;padding:1px 4px;border-radius:3px;background:color-mix(in srgb,var(--ws-accent) 13%,var(--paper));color:var(--ink);font-size:10px;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:599px){.workshop-recent-main{gap:3px}.workshop-folder{max-width:42%;font-size:9px;line-height:14px;padding:1px 3px}}
+
+.journey-hp.is-exceeded .journey-hp-track{display:none}
+.journey-hp.is-exceeded .journey-hp-text{width:100%;min-width:0;text-align:center;font-size:11px;overflow:hidden;text-overflow:ellipsis}
+
+/* A fixed 10px clock pie leaves the rest of each line for the task identity. */
+.workshop-recent-row{display:flex;gap:4px}
+.workshop-recent-time{display:block;flex:0 0 10px;width:10px;height:10px;min-width:10px;border-radius:50%;font-size:0;background:conic-gradient(from 0deg,color-mix(in srgb,var(--ink) 10%,var(--paper)) 0deg var(--elapsed-angle,0deg),color-mix(in srgb,var(--ws-accent) 75%,var(--ink)) var(--elapsed-angle,0deg) 360deg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 18%,transparent)}
+.is-stale .workshop-recent-time{opacity:.5}
+
+/* Compact cargo piles share the old journal buttons and their focus targets. */
+.workshop-room .journey-cargo{width:42px;height:40px;min-width:0;max-width:none;min-height:0;padding:0;bottom:6px;border:0;border-radius:5px;background:transparent;box-shadow:none;overflow:visible}
+.workshop-room .journey-task-badge.journey-cargo{right:0}
+.workshop-room .journey-done-badge.journey-cargo{left:0}
+.workshop-room .journey-cargo:before,.workshop-room .journey-cargo:after{display:none}
+.cargo-stack{display:block;position:relative;width:100%;height:100%;border-bottom:3px solid #8a907c80;border-radius:3px;pointer-events:none}
+.cargo-item{position:absolute;bottom:0;left:11px;width:21px;height:23px;transform-origin:center bottom}
+.cargo-item svg{display:block;width:100%;height:100%;overflow:visible}
+.cargo-item:first-child:nth-last-child(n+4){left:1px}
+.cargo-item:nth-child(2){left:20px;bottom:1px;transform:rotate(5deg)}
+.cargo-item:nth-child(3){left:10px;bottom:15px;transform:rotate(-5deg)}
+.cargo-body{fill:#d9ad70;stroke:#785c3e;stroke-width:1.5;stroke-linejoin:round}
+.cargo-ribbon{fill:#f9e8bf;stroke:#b18550;stroke-width:1}
+.cargo-flag{fill:#78b996;stroke:#346b50;stroke-width:1.5;stroke-linejoin:round}
+[data-kind=active] .cargo-body{fill:var(--ws-accent);stroke:#344b59}
+.cargo-handle{fill:none;stroke:#344b59;stroke-width:2}
+.cargo-strap{fill:none;stroke:#fff1cc;stroke-width:2}
+.cargo-more,.cargo-state{position:absolute;right:-2px;top:-2px;min-width:13px;height:14px;line-height:13px;border:1px solid #687e80;border-radius:4px;background:#fff9e9;color:#263b48;font-size:12px;font-weight:bold;text-align:center}
+.cargo-state{right:auto;left:-2px;color:#795116;border-color:#b29867}
+.cargo-stack [hidden]{display:none!important}
+.journey-cargo.is-stale .cargo-stack{border-bottom-style:dashed;opacity:.65}
+.workshop-room[data-riding=true]:not(.is-stale) [data-kind=active] .cargo-stack{animation:cargo-travel 1.4s ease-in-out infinite}
+.workshop-room.is-packing [data-kind=done] .cargo-stack{animation:cargo-arrive .45s ease-out 1}
+@keyframes cargo-travel{50%{transform:translateY(-1.5px) rotate(-2deg)}}
+@keyframes cargo-arrive{0%{transform:translateY(-5px)}65%{transform:translateY(1px)}100%{transform:translateY(0)}}
+.workshop-paused .journey-cargo .cargo-stack{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.journey-cargo .cargo-stack{animation:none!important}}
+@media(max-width:599px){.workshop-room .journey-cargo{width:30px;height:30px;bottom:5px}.cargo-item{width:16px;height:18px;left:7px}.cargo-item:nth-child(2){left:14px}.cargo-item:nth-child(3){left:7px;bottom:11px}.cargo-more,.cargo-state{font-size:10px;min-width:11px;height:12px;line-height:11px}}
+
+/* Folder workspace: agents select a tool, tasks are grouped by full working path. */
+.workshop-workspace{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;padding:14px;align-items:start}
+.workshop-sidebar{min-width:0}
+#workshop-all{width:100%;margin-bottom:10px;min-height:36px;text-align:left;padding:7px 12px}
+#workshop-all[aria-pressed=true]{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 8%,var(--paper))}
+.workshop-sidebar .workshop-grid{display:flex;flex-direction:column;gap:10px;padding:0;background:transparent}
+.workshop-sidebar .workshop-grid>.journey-landscape{display:none}
+.workshop-sidebar .workshop-room{isolation:isolate;border:1px solid var(--line);border-radius:10px;overflow:hidden;padding:0 4px 0;background:var(--paper)}
+.workshop-sidebar .workshop-room.is-selected{border-color:var(--ws-accent);box-shadow:inset 0 0 0 1px var(--ws-accent)}
+.workshop-sidebar .workshop-room>.journey-landscape{z-index:-1;height:var(--journey-height)}
+.workshop-sidebar .workshop-recent{display:none}
+.workshop-sidebar .workshop-status{padding:4px;gap:3px;background:var(--paper)}
+.workshop-sidebar .workshop-attention{min-height:28px;padding:2px 4px}
+.folder-board{min-width:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:left}
+.folder-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.folder-heading{font-size:17px;margin:0 auto 0 0;white-space:nowrap}
+.folder-search{min-width:140px;width:220px;max-width:100%;font:inherit;font-size:12px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink)}
+.folder-filters{display:flex;gap:3px;flex-wrap:wrap}
+.folder-filters button{font:inherit;font-size:12px;min-height:34px;padding:6px 10px}
+.folder-filters button.selected{color:var(--paper);background:var(--blue);border-color:var(--blue)}
+.folder-notice{font-size:11px;color:var(--muted);margin:7px 0 12px;min-height:16px}
+.folder-group{border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-bottom:12px;background:var(--paper)}
+.folder-toggle{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:0;background:color-mix(in srgb,var(--ink) 3%,var(--paper));color:var(--ink);font:inherit;text-align:left;min-height:48px}
+.folder-label{display:flex;gap:9px;align-items:center;min-width:0;flex:1}
+.folder-icon{color:#d9a33d;font-size:21px;flex:none}
+.folder-name{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:50%}
+.folder-path{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.folder-summary{font-size:11px;color:var(--muted);flex:none;white-space:nowrap}
+.folder-chevron{font-size:14px;flex:none}
+.folder-task{display:grid;grid-template-columns:100px minmax(0,1fr) 74px 10px;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-top:1px solid var(--line);border-radius:0;background:var(--paper);color:var(--ink);font:inherit;text-align:left;min-height:46px}
+.folder-task:hover{background:color-mix(in srgb,var(--blue) 5%,var(--paper))}
+.folder-provider{font-size:11px;padding:4px 6px;border-radius:5px;background:#4b9f911c;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-provider=claude]>.folder-provider{background:#c4785d22}
+[data-provider=antigravity]>.folder-provider{background:#9372c522}
+.folder-task-title{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-task-state{font-size:11px;text-align:center;padding:3px 5px;border-radius:10px;color:var(--muted);background:color-mix(in srgb,var(--ink) 5%,var(--paper))}
+.folder-task:is([data-status=running],[data-status=background]) .folder-task-state{color:var(--blue);background:color-mix(in srgb,var(--blue) 10%,var(--paper))}
+.folder-task:is([data-status=failed],[data-status=waiting_input],[data-status=unknown]) .folder-task-state{color:#9b671c;background:#dfad3620}
+.folder-pie{display:block;width:10px;height:10px;min-width:10px;color:var(--blue)}
+.folder-empty{padding:42px 12px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:9px}
+.folder-board [hidden]{display:none!important}
+.folder-board button:focus-visible{outline:2px solid var(--blue);outline-offset:-3px}
+@media(max-width:1000px){.workshop-workspace{grid-template-columns:180px minmax(0,1fr);gap:12px}.folder-toolbar{gap:7px}.folder-search{flex:1}.folder-filters{width:100%}}
+@media(max-width:759px){.workshop-workspace{display:block;padding:10px}.workshop-sidebar .workshop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.workshop-sidebar{margin-bottom:16px}#workshop-all{width:auto;min-height:32px}.folder-filters{width:auto}.folder-heading{font-size:15px}.folder-search{width:170px}.folder-path{display:none}.folder-name{max-width:100%}.folder-task{grid-template-columns:85px minmax(0,1fr) 65px 10px;gap:7px;padding:9px}.workshop-sidebar .workshop-room{padding:0 1px}.workshop-sidebar .workshop-status{font-size:10px}}
+@media(max-width:420px){.folder-toolbar{display:grid;grid-template-columns:1fr}.folder-search{width:100%}.folder-filters{gap:2px}.folder-filters button{font-size:11px;padding:5px 8px}.folder-toggle{padding:9px 8px;gap:6px}.folder-label{gap:5px}.folder-name{font-size:12px}.folder-summary{font-size:10px}.folder-task{grid-template-columns:minmax(0,1fr) 72px 10px;gap:5px 8px}.folder-provider{grid-column:1;grid-row:1;width:max-content;max-width:100%;font-size:10px}.folder-task-title{grid-column:1/-1;grid-row:2;font-size:12px}.folder-task-state{grid-column:2;grid-row:1}.folder-pie{grid-column:3;grid-row:1}.workshop-sidebar .workshop-room{overflow:visible}.workshop-sidebar .workshop-room>.journey-landscape{border-radius:9px}.workshop-sidebar .journey-traveller{max-width:100%}}
+
+.folder-task{--ws-accent:#4b9f91}
+.folder-task[data-provider=claude]{--ws-accent:#c4785d}
+.folder-task[data-provider=antigravity]{--ws-accent:#9372c5}
+
+/* Keep the folder workspace close to the original compact dashboard height. */
+.workshop-workspace{grid-template-columns:210px minmax(0,1fr);gap:14px;padding:10px}
+.workshop-sidebar .workshop-grid{--journey-height:80px;gap:6px}
+.workshop-sidebar .workshop-room{height:80px;padding:0;overflow:hidden}
+.workshop-sidebar .journey-traveller{width:100%;height:80px}
+.workshop-sidebar .workshop-scene{width:100px;height:80px;margin:0}
+.workshop-sidebar .workshop-scene svg{height:83px;bottom:0}
+.workshop-sidebar .journey-overlay{left:100px;right:5px;top:8px;bottom:auto;width:auto;transform:none}
+.workshop-sidebar .workshop-name{font-size:12px;min-height:22px;padding:1px 0}
+.workshop-sidebar .journey-hp{min-height:23px;padding:2px 0;gap:3px}
+.workshop-sidebar .journey-hp-text{font-size:11px;padding:1px 2px}
+.workshop-sidebar .journey-hp-track{min-width:16px;height:6px}
+.workshop-sidebar .workshop-status{position:absolute;left:101px;right:2px;bottom:2px;max-height:22px;overflow:auto;flex-wrap:nowrap;justify-content:flex-start;padding:0;white-space:nowrap;background:transparent;font-size:9px}
+.workshop-sidebar .workshop-attention{min-height:20px;padding:1px 3px;font-size:9px;flex-shrink:0}
+.workshop-sidebar .journey-cargo{width:25px;height:27px;bottom:3px}
+.workshop-sidebar .journey-task-badge.journey-cargo{right:auto;left:75px}
+.workshop-sidebar .journey-done-badge.journey-cargo{left:0}
+.workshop-sidebar .cargo-item{width:13px;height:16px;left:6px}
+.workshop-sidebar .cargo-item:nth-child(2){left:12px;bottom:1px}
+.workshop-sidebar .cargo-item:nth-child(3){left:6px;bottom:10px}
+.workshop-sidebar .cargo-more,.workshop-sidebar .cargo-state{font-size:9px;min-width:10px;height:11px;line-height:10px;top:-1px;right:0}
+.workshop-sidebar .cargo-state{right:auto;left:0}
+.folder-board{height:252px;display:flex;flex-direction:column;min-height:0}
+.folder-toolbar{flex:none;gap:8px;margin:0 0 6px}
+.folder-heading{font-size:14px}
+.folder-filters{width:auto;margin-left:auto}
+.folder-filters button{min-height:28px;padding:4px 8px;font-size:11px}
+.folder-notice{flex:none;margin:0 0 5px;font-size:10px}
+.folder-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.folder-group{margin-bottom:7px}
+.folder-toggle{min-height:32px;padding:5px 9px}
+.folder-name{font-size:12px}
+.folder-task{min-height:34px;padding:5px 9px;gap:8px}
+.folder-task-title{font-size:12px}
+.folder-provider{padding:3px 5px;font-size:10px}
+.folder-task-state{padding:2px 4px;font-size:10px}
+.workshop-footer{padding:3px 10px;min-height:34px}
+.workshop-footer button{min-height:30px;padding:4px 8px}
+.workshop-quality{font-size:10px}
+.settings-body #workshop-all{width:100%;margin:0 0 10px;min-height:34px}
+@media(min-width:760px) and (max-width:900px){.folder-toolbar{flex-wrap:nowrap}.folder-heading{display:none}.folder-filters{margin-left:0}}
+@media(max-width:759px){
+ .workshop-workspace{display:block;padding:8px}.workshop-sidebar{margin-bottom:8px}
+ .workshop-sidebar .workshop-grid{--journey-height:100px;gap:5px}
+ .workshop-sidebar .workshop-room{height:100px}.workshop-sidebar .journey-traveller{height:100px;width:100%;max-width:100%}
+ .workshop-sidebar .workshop-scene{height:100px;width:100px;max-width:100%;margin:0 auto}.workshop-sidebar .workshop-scene svg{height:68px;bottom:0}
+ .workshop-sidebar .journey-overlay{top:2px;left:3px;right:3px;transform:none;width:auto}
+ .workshop-sidebar .workshop-name{font-size:10px;min-height:18px}.workshop-sidebar .journey-hp{min-height:19px;width:85px;max-width:100%;margin:0 auto}.workshop-sidebar .journey-hp-text{font-size:10px}
+ .workshop-sidebar .workshop-status{display:none}
+ .workshop-sidebar .journey-task-badge.journey-cargo{left:auto;right:0}.workshop-sidebar .journey-done-badge.journey-cargo{left:0}
+ .folder-board{height:230px}.folder-toolbar{display:flex;flex-wrap:nowrap}.folder-heading{display:none}.folder-filters{margin-left:0}.folder-list{scrollbar-gutter:auto}
+ .folder-task{min-height:34px}.folder-task-title{font-size:11px}.folder-toggle{padding:5px 7px}.folder-summary{font-size:10px}
+}
+@media(max-width:759px){.workshop-sidebar .workshop-room{height:116px}.workshop-sidebar .workshop-status{display:flex;position:static;height:16px;max-height:16px;font-size:8px;background:var(--paper)}.workshop-sidebar .workshop-attention{font-size:8px;min-height:16px;padding:0 2px}}
+/* One combined task list; spend the saved toolbar space on readable rows. */
+.folder-toolbar{min-height:18px;margin-bottom:4px}
+.folder-heading{font-size:12px;line-height:18px}
+.folder-group{margin-bottom:4px;border-radius:6px;margin-left:var(--folder-indent,0px)}
+.folder-toggle{min-height:26px;padding:2px 8px;gap:7px;line-height:20px}
+.folder-icon{font-size:16px;line-height:20px}
+.folder-task{min-height:28px;padding:3px 8px;gap:7px;line-height:18px;grid-template-columns:88px minmax(0,1fr) 68px 10px}
+.folder-provider{padding:0 5px;line-height:18px}
+.folder-task-state{padding:0 4px;line-height:18px;white-space:nowrap}
+@media(max-width:900px){.folder-toolbar{display:none}}
+@media(max-width:420px){.folder-task{grid-template-columns:minmax(0,1fr) 68px 10px;row-gap:1px;padding:3px 7px;min-height:43px}.folder-task-title{line-height:18px}.folder-toggle{padding:2px 7px}}
+
+/* Integrated provider overview: character, daily HP and weekly quota share a card. */
+.workshop-workspace{grid-template-columns:minmax(360px,420px) minmax(0,1fr)}
+#monitor-grid.integrated-sidebar{display:block;min-width:0;margin:0}
+.integrated-sidebar #usage[hidden]{display:none}
+.integrated-sidebar .workshop-grid{display:flex;flex-direction:column;gap:6px}
+#monitor-grid .workshop-room{height:122px;padding:0;overflow:hidden;background:var(--paper)}
+#monitor-grid .workshop-room>.journey-landscape{width:100px;right:auto}
+#monitor-grid .journey-traveller{height:100px;max-width:none;width:100%}
+#monitor-grid .workshop-scene{width:100px;height:100px;max-width:none;margin:0}
+#monitor-grid .workshop-scene svg{height:83px;bottom:0}
+#monitor-grid .journey-overlay{left:110px;right:8px;top:5px;display:flex;flex-direction:row;align-items:center;gap:10px;width:auto;transform:none}
+#monitor-grid .workshop-name{font-size:12px;min-height:24px;flex:none;padding:0}
+#monitor-grid .journey-hp{width:auto;flex:1;min-width:0;margin:0;min-height:24px}
+#monitor-grid .journey-hp::before{content:'HP';font-size:9px;color:var(--muted)}
+#monitor-grid .journey-hp-text{font-size:10px}
+#monitor-grid .journey-task-badge.journey-cargo{left:75px;right:auto;bottom:3px}
+#monitor-grid .journey-done-badge.journey-cargo{left:0;bottom:3px}
+#monitor-grid .workshop-status{position:absolute;left:3px;right:auto;width:96px;bottom:2px;display:flex;height:18px;max-height:18px;font-size:8px;overflow:auto;background:var(--paper)}
+#monitor-grid .workshop-attention{font-size:8px;min-height:16px;padding:0 2px}
+.integrated-usage{position:absolute;left:108px;right:6px;top:31px;bottom:3px;min-width:0}
+#monitor-grid .integrated-usage .usage-card[data-usage-provider]{height:100%;padding:0 2px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:auto;container-type:normal}
+#monitor-grid .integrated-usage .usage-card::before,#monitor-grid .integrated-usage .usage-card::after{display:none}
+#monitor-grid .integrated-usage :is(.usage-card-heading,.console-controls,.pixel-battery){display:none}
+#monitor-grid .integrated-usage .usage-window{margin-top:0}
+#monitor-grid .integrated-usage .usage-window-title strong{font-size:16px;line-height:18px}
+#monitor-grid .integrated-usage .usage-window-title>span{font-size:10px}
+#monitor-grid .integrated-usage .usage-meter{margin:1px 0}
+#monitor-grid .integrated-usage .usage-recommendation-label{font-size:8px;line-height:10px}
+#monitor-grid .integrated-usage .usage-budget-row{font-size:9px;line-height:12px;gap:0 5px}
+#monitor-grid .integrated-usage .usage-budget{flex-basis:auto}
+#monitor-grid .integrated-usage .usage-secondary{display:flex;margin-top:1px}
+#monitor-grid .integrated-usage .usage-secondary .usage-window-title strong{font-size:11px;line-height:13px}
+#monitor-grid .integrated-usage .usage-secondary .usage-budget-row{font-size:8px}
+#monitor-grid .integrated-usage .usage-foot{margin-top:2px;font-size:9px;line-height:12px}
+#monitor-grid .integrated-usage .usage-empty{margin:6px 0;font-size:11px}
+#monitor-grid .integrated-usage .usage-login{font-size:10px}
+#monitor-grid .system-card{display:grid;grid-template-columns:60px minmax(0,1fr);gap:2px 8px;width:100%;height:55px;min-height:0;margin-top:6px;padding:5px 8px;overflow:hidden}
+#monitor-grid .system-card[hidden]{display:none}
+#monitor-grid .system-heading{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:auto;gap:3px;font-size:10px}
+#monitor-grid #system-state{font-size:8px}
+#monitor-grid #system-graphs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;min-width:0}
+#monitor-grid .system-metric{min-width:0}
+#monitor-grid .system-metric-heading{font-size:9px;height:15px}
+#monitor-grid .system-metric-heading strong{font-size:10px}
+#monitor-grid .system-metric svg{height:14px;width:100%;margin:0}
+#monitor-grid #system-history-note{grid-column:2;font-size:8px;margin:0;line-height:10px}
+.workshop-workspace>.folder-board{height:439px}
+.workshop-workspace:has(.integrated-sidebar.without-system)>.folder-board{height:378px}
+@media(max-width:900px) and (min-width:760px){.workshop-workspace{grid-template-columns:350px minmax(0,1fr);gap:8px}.folder-task{grid-template-columns:65px minmax(0,1fr) 68px 10px;gap:4px}}
+@media(max-width:759px){
+ .workshop-workspace{display:block}
+ #monitor-grid.integrated-sidebar{margin-bottom:8px}
+ .workshop-workspace>.folder-board,.workshop-workspace:has(.integrated-sidebar.without-system)>.folder-board{height:230px}
+ #monitor-grid .journey-overlay{gap:5px;left:97px;right:5px}
+ #monitor-grid .workshop-name{font-size:10px}
+ #monitor-grid .integrated-usage{left:95px;right:4px}
+ #monitor-grid .workshop-scene{width:90px}
+ #monitor-grid .workshop-room>.journey-landscape{width:90px}
+ #monitor-grid .journey-task-badge.journey-cargo{left:65px}
+ #monitor-grid .workshop-status{width:86px}
+}
+/* Console-shell colors no longer apply on the shared card surface. */
+#monitor-grid .integrated-usage .usage-card[data-usage-provider]{--ink:inherit;--muted:inherit;--amber:inherit;--track:inherit;--blue:inherit;color:var(--ink)}
+#monitor-grid #system-chip{--muted:inherit;--track:inherit;--line:inherit;--blue:inherit;--amber:inherit;background:var(--paper);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+#monitor-grid #system-chip .system-heading{color:var(--ink)}
+#monitor-grid #system-chip .system-heading>span{color:var(--muted)}
+
+/* Match the provider portrait to the travelling character; give titles the saved width. */
+.folder-task{grid-template-columns:10px 24px minmax(0,1fr) 68px}
+.folder-provider{grid-column:2;grid-row:1}
+.folder-pie{grid-column:1;grid-row:1}
+.folder-task-title{grid-column:3;grid-row:1}
+.folder-task-state{grid-column:4;grid-row:1}
+.folder-provider{display:inline-flex;align-items:center;justify-content:center;width:24px;height:18px;padding:0;background:transparent!important;border-radius:0;overflow:visible}
+.folder-provider svg{display:block;width:20px;height:18px;flex:none}
+@media(max-width:420px){.folder-task-title{grid-column:1/-1;grid-row:2}}
+
+/* Keep the board compact with a small gap below the header controls. */
+main{padding-top:6px}
+@media(max-width:650px){main{padding-top:8px}}
+
+.settings-body #workshop-open{width:100%;margin:0 0 10px;min-height:34px}
+
+/* State expressions stay inside the approved 20×18px portrait footprint. */
+.folder-task[data-status=running] .folder-provider svg{animation:face-active-sway 1.4s ease-in-out infinite;animation-delay:var(--face-phase,0s);transform-origin:center}
+.folder-task[data-status=background] .folder-provider svg{animation:face-sway 5s ease-in-out infinite;animation-delay:var(--face-phase,0s);transform-origin:center}
+.folder-provider.face-arrival{animation:face-arrival 700ms ease-out 1}
+.folder-board:is(.is-stale,.faces-paused) .folder-provider,.folder-board:is(.is-stale,.faces-paused) .folder-provider svg{animation:none!important}
+.folder-board.is-stale .folder-provider{filter:saturate(.45)}
+@keyframes face-active-sway{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
+@keyframes face-sway{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes face-arrival{0%,100%{filter:brightness(1)}40%{filter:brightness(1.45);background:color-mix(in srgb,var(--blue) 18%,transparent)}}
+@media(prefers-reduced-motion:reduce){.folder-provider,.folder-provider svg{animation:none!important}}
+
+/* Keep the former name width as a spacer so HP stays the same length, aligned left. */
+#monitor-grid .workshop-name{visibility:hidden;pointer-events:none;order:2}
+#monitor-grid .journey-hp{order:1}
+
+/* Two aligned gauges share the character card without changing its footprint. */
+#monitor-grid .journey-overlay{top:19px;left:110px;right:8px;display:block}
+#monitor-grid .workshop-name{display:none}
+#monitor-grid .journey-hp{display:grid;grid-template-columns:43px minmax(0,1fr) 36px;gap:6px;height:25px;min-height:25px;width:100%;padding:0}
+#monitor-grid .journey-hp::before{content:'오늘 HP';font-size:10px;text-align:left;color:#fff;text-shadow:-.5px 0 #34465b,.5px 0 #34465b,0 -.5px #34465b,0 .5px #34465b}
+#monitor-grid .journey-hp-track{height:8px;min-width:0}
+#monitor-grid .journey-hp-text{font-size:11px;padding:0;text-align:right;min-width:0;background:transparent;color:var(--ink)}
+#monitor-grid .journey-hp:is(.is-unknown,.is-exceeded) .journey-hp-text{grid-column:2/4;text-align:right;width:auto;font-size:10px}
+#monitor-grid .journey-hp:is(.is-unknown,.is-exceeded) .journey-hp-track{display:none}
+#monitor-grid .integrated-usage{top:44px;left:110px;right:8px;bottom:3px}
+#monitor-grid .integrated-usage .usage-card[data-usage-provider]{padding:0;--blue:var(--ws-accent)}
+#monitor-grid .integrated-usage .usage-primary{display:grid;grid-template-columns:43px minmax(0,1fr) 36px;grid-template-rows:25px 13px auto;gap:0 6px;margin:0}
+#monitor-grid .integrated-usage .usage-primary .usage-window-title{display:contents}
+#monitor-grid .integrated-usage .usage-primary .usage-window-title>span{grid-column:1;grid-row:1;align-self:center;text-align:left;color:var(--ink);font-size:10px}
+#monitor-grid .integrated-usage .usage-primary .usage-window-title strong{grid-column:3;grid-row:1;align-self:center;text-align:right;font-size:11px;line-height:16px}
+#monitor-grid .integrated-usage .usage-primary .usage-meter{grid-column:2;grid-row:1;align-self:center;margin:0;min-width:0}
+#monitor-grid .integrated-usage .usage-primary .usage-progress{height:8px;margin:0}
+#monitor-grid .integrated-usage .usage-primary .energy-gauge{height:8px;margin:0}
+#monitor-grid .integrated-usage .usage-primary .usage-recommendation-label{grid-column:2/4;grid-row:2;font-size:9px;line-height:13px;overflow:hidden;text-overflow:ellipsis}
+#monitor-grid .integrated-usage .usage-primary .usage-budget-row{grid-column:1/-1;grid-row:3;display:flex;flex-wrap:nowrap;justify-content:space-between;gap:6px;border-top:1px solid var(--line);margin-top:3px;padding-top:2px;font-size:9px;line-height:14px}
+#monitor-grid .integrated-usage .usage-primary .usage-budget{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#monitor-grid .integrated-usage .usage-primary .usage-reset{flex:none;font-size:9px}
+#monitor-grid .integrated-usage .usage-secondary{display:none}
+#monitor-grid .integrated-usage .usage-foot{margin-top:0;font-size:8px;line-height:12px}
+@media(max-width:759px){#monitor-grid .journey-overlay,#monitor-grid .integrated-usage{left:97px;right:5px}}
+#monitor-grid .integrated-usage .usage-primary .usage-window-title strong{display:block;text-shadow:none}
+#monitor-grid .integrated-usage .usage-primary .usage-recommendation-label{text-align:left}
+
+/* Share the pie clock: fresh completions fade gently back to the theme surface. */
+.folder-task[data-status=completed]{background:color-mix(in srgb,#42bfa0 var(--completion-tint,0%),var(--paper))}
+.folder-task[data-status=completed]:hover{background:color-mix(in srgb,#42bfa0 calc(var(--completion-tint,0%) + 4%),var(--paper))}
+
+/* Transitions stay clipped inside the existing scrolling viewport. */
+.folder-list{position:relative;overflow-anchor:none}
+.folder-list.is-transitioning .folder-group{overflow:visible}
+.folder-exit-layer{position:absolute;left:0;right:0;overflow:hidden;pointer-events:none;z-index:2;contain:strict}
+
+/* Independent three-layer scenery inside each existing character viewport. */
+.workshop-sidebar .journey-parallax-hills{display:flex;left:0;width:480px;height:40px;will-change:transform}
+.workshop-sidebar .journey-parallax-hills svg{width:240px;flex:0 0 240px;height:100%}
+.workshop-sidebar .journey-road{animation:none;background-image:none}
+.journey-trail{position:absolute;top:2px;left:0;width:360px;height:18px;will-change:transform}
+.journey-trail svg{display:block;width:360px;height:18px}
+.trail-grass{fill:var(--hill)}
+.trail-stones{fill:color-mix(in srgb,var(--hill) 65%,var(--ink))}
+@media(prefers-reduced-motion:reduce){.journey-trail,.journey-parallax-hills,.journey-parallax-mountains{will-change:auto}}
+
+.workshop-sidebar .journey-parallax-mountains{display:flex;width:640px;will-change:transform}
+.workshop-sidebar .journey-parallax-mountains svg{width:320px;flex:0 0 320px;height:100%}
+@media(prefers-reduced-motion:reduce){.workshop-sidebar .journey-parallax-mountains{will-change:auto}}
+
+/* Subfolders share a compact chip rail; one sibling opens beneath each rail. */
+.folder-chip-row{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 4px var(--folder-indent,0px);min-width:0}
+.folder-chip,.folder-chip-more{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:min(190px,100%);min-height:24px;height:24px;padding:2px 7px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;font-size:11px;line-height:18px;white-space:nowrap;box-sizing:border-box}
+.folder-chip:hover,.folder-chip-more:hover{background:color-mix(in srgb,var(--blue) 7%,var(--paper))}
+.folder-chip.selected{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 10%,var(--paper))}
+.folder-chip-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.folder-chip-arrow,.folder-chip-count,.folder-chip-attention{flex:none}
+.folder-chip-arrow,.folder-chip-count{color:var(--muted)}
+.folder-chip-attention{font-size:7px;color:#b48220}
+.folder-chip-more{color:var(--blue)}
+.folder-detail .folder-chevron{font-size:10px}
+
+/* Neon Orbit: visual layers only; approved card/list geometry stays shared. */
+.orbit-craft,.orbit-face-ring,.weather-chip-condition{display:none}
+:root[data-theme=orbit]{color-scheme:dark;--bg:#0c101d;--paper:#121627;--ink:#edf0ff;--muted:#afb5d2;--line:#454065;--blue:#bda5ff;--green:#61e8d5;--amber:#ffd095;--red:#ff98b5;--selected:#29203f;--selected-line:#9366d7;--warning-bg:#382c31;--warning-ink:#ffd095;--warning-line:#795c54;--track:#26263e;--stale-bar:#74768d;--subtle:#171b2e;--row-line:#2d2c46;--highlight:#302044;--icon:#bda5ff;--claude:#ffc086;--neutral:#26283e;--success-bg:#183934;--error-bg:#41233a;--unread:#262039}
+[data-theme=orbit] body{background:radial-gradient(ellipse at 15% 0,#29204b55,transparent 55%),var(--bg)}
+[data-theme=orbit] :is(.workshop-panel,.folder-board,.settings-body,dialog){box-shadow:inset 0 1px 0 #a78bfa12,0 8px 24px #05071230}
+[data-theme=orbit] .workshop-panel{background:#0f1322;border-color:#63508e}
+[data-theme=orbit] :is(.settings-body,dialog){background:#151a2d}
+[data-theme=orbit] #clock{color:#e1d5ff}
+[data-theme=orbit] #weather-chip{color:#67e7e0;border-color:#4e5475;background:#171c30}
+[data-theme=orbit] .weather-chip-condition{display:inline}
+[data-theme=orbit] #monitor-grid .workshop-room{--orbit-accent:#f36be1;--ws-accent:#e675ed;background:linear-gradient(110deg,#1d2440 0,#15182b 40%,#121627 100%);border-color:#65508b;box-shadow:inset 0 1px 0 #e0c5ff0a}
+[data-theme=orbit] #monitor-grid [data-workshop-provider=claude]{--orbit-accent:#ffbb83;--ws-accent:#eeb181}
+[data-theme=orbit] #monitor-grid [data-workshop-provider=antigravity]{--orbit-accent:#64e5ef;--ws-accent:#6ddbe4}
+[data-theme=orbit] #monitor-grid .workshop-room[data-pose=working]{border-color:#b65bd3;box-shadow:inset 0 0 18px #a346cb0c}
+[data-theme=orbit] #monitor-grid .workshop-room[data-pose=failed]{border-color:#e18d85}
+[data-theme=orbit] #monitor-grid .workshop-room>.journey-landscape{background:linear-gradient(#1a2945,#253653 60%,#11172b);border-right:1px solid #7d71aa55}
+[data-theme=orbit][data-sky=day] #monitor-grid .workshop-room>.journey-landscape{background:linear-gradient(#3a5976,#819bad)}
+[data-theme=orbit][data-sky=dawn] #monitor-grid .workshop-room>.journey-landscape{background:linear-gradient(#444060,#ae7b87)}
+[data-theme=orbit][data-sky=dusk] #monitor-grid .workshop-room>.journey-landscape{background:linear-gradient(#343252,#9a657f)}
+[data-theme=orbit] #monitor-grid :is(.journey-mountains,.journey-hills,.journey-road,.journey-puddles){display:none}
+[data-theme=orbit] #monitor-grid .journey-cloud{filter:drop-shadow(0 2px 4px #080c1c44);opacity:.65}
+[data-theme=orbit] #monitor-grid .journey-precipitation{opacity:.45}
+[data-theme=orbit][data-journey-weather=storm] #monitor-grid .journey-landscape{filter:brightness(.75)}
+[data-theme=orbit][data-journey-weather=unknown] #monitor-grid .journey-landscape{background:#1c2439}
+[data-theme=orbit][data-journey-weather=unknown] #monitor-grid :is(.journey-orb,.journey-stars,.journey-clouds){visibility:hidden}
+[data-theme=orbit] #monitor-grid .workshop-scene svg{overflow:hidden}
+[data-theme=orbit] .workshop-scene :is(.ride-rig,.ws-dust,.ws-sleep,.ws-bubble){display:none}
+[data-theme=orbit] .orbit-craft{display:block;color:var(--orbit-accent,#c08eff);transform-origin:50% 65%}
+[data-theme=orbit] .orbit-face-ring{display:block}
+[data-theme=orbit] .folder-provider svg{filter:drop-shadow(0 0 2px #a784ff55)}
+.orbit-engine,.orbit-signal,.orbit-warning,.orbit-droplets,.orbit-frost{display:none}
+[data-theme=orbit] [data-pose=working] .orbit-craft{animation:orbit-hover 3s ease-in-out infinite}
+[data-theme=orbit] [data-pose=background] .orbit-craft{animation:orbit-hover 6s ease-in-out infinite}
+[data-theme=orbit] :is([data-pose=working],[data-pose=background]) .orbit-engine{display:block;animation:orbit-thrust 1.8s ease-in-out infinite;transform-origin:25px 61px}
+[data-theme=orbit] [data-pose=background] .orbit-engine{opacity:.55;animation-duration:3s}
+[data-theme=orbit] [data-pose=waiting] .orbit-signal{display:block;animation:orbit-signal 2.8s ease-in-out infinite}
+[data-theme=orbit] [data-pose=failed] .orbit-warning{display:block}
+[data-theme=orbit] :is([data-pose=unknown],[data-pose=loading]) .orbit-craft{opacity:.6}
+[data-theme=orbit] :is([data-pose=working],[data-pose=background]) .orbit-landing{visibility:hidden}
+[data-theme=orbit]:is([data-journey-weather=rain],[data-journey-weather=storm]) .orbit-droplets{display:block}
+[data-theme=orbit][data-journey-weather=snow] .orbit-frost{display:block}
+[data-theme=orbit] #monitor-grid .journey-hp::before{color:var(--ink);text-shadow:none}
+[data-theme=orbit] #monitor-grid .journey-hp-track{background:#24243a;border-color:#72608e;border-radius:5px}
+[data-theme=orbit] #monitor-grid .journey-hp-fill{background:linear-gradient(90deg,#f15bb4,#a04fe9);box-shadow:0 0 7px #bd65d755}
+[data-theme=orbit] #monitor-grid .usage-progress{border-radius:5px}
+[data-theme=orbit] #monitor-grid .usage-progress::-webkit-progress-bar{background:#24243a;border-radius:5px;box-shadow:inset 0 0 0 1px #72608e}
+[data-theme=orbit] #monitor-grid .usage-progress::-webkit-progress-value{background:linear-gradient(90deg,#be6ce5,#7957e5);border-radius:5px}
+[data-theme=orbit] #monitor-grid .usage-progress::-moz-progress-bar{background:linear-gradient(90deg,#be6ce5,#7957e5);border-radius:5px}
+[data-theme=orbit] #monitor-grid .usage-window.stale .usage-progress::-webkit-progress-value{background:var(--stale-bar)}
+[data-theme=orbit] #monitor-grid .usage-window.stale .usage-progress::-moz-progress-bar{background:var(--stale-bar)}
+[data-theme=orbit] .usage-recommendation{border-color:#62f0d4}
+[data-theme=orbit] #monitor-grid .workshop-status{background:#121627e8;color:#b9c3e4}
+[data-theme=orbit] .folder-group{border-color:#4e426c;background:#111627}
+[data-theme=orbit] .folder-toggle{background:linear-gradient(90deg,#211d37,#15192b)}
+[data-theme=orbit] .folder-chip[aria-expanded=true]{color:#76f0df;border-color:#57c9bd;background:#16312f}
+[data-theme=orbit] .folder-task[data-status=running]{background:linear-gradient(100deg,#ed21762b,#932cdb28 55%,#6342c522);box-shadow:inset 2px 0 #ed5bbd}
+[data-theme=orbit] .folder-task[data-status=running] .folder-task-state{color:#6df0df}
+[data-theme=orbit] .folder-task:focus-visible{outline-color:#75e9de;outline-offset:-2px}
+[data-theme=orbit] .folder-task:hover{background-color:#29233e}
+[data-theme=orbit] #monitor-grid #system-chip{border-color:#65508b;background:linear-gradient(110deg,#1a1e33,#121627)}
+@keyframes orbit-hover{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-2px) rotate(1deg)}}
+@keyframes orbit-thrust{0%,100%{transform:scaleX(.8)}50%{transform:scaleX(1)}}
+@keyframes orbit-signal{0%,100%{opacity:.5}50%{opacity:1}}
+@media(max-width:650px){[data-theme=orbit] .weather-chip-place{display:none}}
+@media(prefers-reduced-motion:reduce){[data-theme=orbit] :is(.orbit-craft,.orbit-engine,.orbit-signal){animation:none!important}}
+[data-theme=orbit] body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+[data-theme=orbit] #monitor-grid :is(.journey-hp-text,.usage-window-title strong){font-variant-numeric:tabular-nums}
+[data-theme=orbit]:is([data-journey-weather=rain],[data-journey-weather=storm]) #monitor-grid .journey-precipitation{background:linear-gradient(110deg,transparent 48%,#accfe8 49% 51%,transparent 52%) 0 0/31px 23px;opacity:.3}
+/* Reserve weather text space on narrow screens without moving the board down. */
+@media(max-width:420px){
+ [data-theme=orbit] .settings summary span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ [data-theme=orbit] .usage-heading{flex-wrap:nowrap}
+ [data-theme=orbit] .usage-heading .top-actions{min-width:0;grid-template-columns:minmax(0,1fr) auto auto}
+ [data-theme=orbit] .usage-heading #weather-chip{min-width:0;max-width:100%}
+}
+/* Thread previews occupy the existing scroll area; outer board geometry is unchanged. */
+.folder-toolbar{justify-content:space-between;gap:8px;min-width:0}
+.folder-task{padding:6px 8px;row-gap:3px;align-content:start;min-height:64px}
+.folder-task-message,.folder-task-choices{grid-column:3/-1;min-width:0;text-align:left;overflow:hidden;font-size:12px;line-height:18px;color:var(--ink);overflow-wrap:anywhere}
+.folder-task-message{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;white-space:normal}
+.folder-task-message.is-unavailable{color:var(--muted);font-size:11px}
+.folder-task-choices{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px;color:var(--muted)}
+.folder-task[data-status=waiting_input]{background:color-mix(in srgb,#d79c31 10%,var(--paper));box-shadow:inset 2px 0 #c88c25}
+.folder-task[data-status=waiting_input] .folder-task-choices{color:var(--ink)}
+.folder-task-state{font-size:10px}
+#session-preview-detail{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px;max-height:42dvh;overflow:auto;overflow-wrap:anywhere}
+#session-preview-detail[hidden]{display:none}
+#session-preview-detail h3{font-size:13px;margin:0 0 8px}
+#session-preview-detail p,#session-preview-detail li{font-size:13px;line-height:1.65}
+.session-preview-body{white-space:pre-wrap;margin:0 0 8px}
+@media(max-width:420px){
+ .folder-task{min-height:80px}
+ .folder-task-message,.folder-task-choices{grid-column:1/-1}
+ .folder-task-message{grid-row:3}.folder-task-choices{grid-row:4}
+}
+.folder-task:is([data-status=waiting_input],[data-status=failed]) .folder-task-state{color:var(--ink)}
+.folder-task[data-status=unknown] .folder-task-state{color:var(--muted);background:color-mix(in srgb,var(--muted) 12%,var(--paper))}
+
+/* Two physical rows; retain the original message in the details dialog. */
+.folder-task-message.is-ai-summary{display:block}
+.folder-summary-line{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:18px}
+/* Keep fullscreen, weather, and settings in one row inside the existing HUD. */
+@media(max-width:650px){
+ .top-actions>#fullscreen-enter{grid-column:1;grid-row:1}
+ .top-actions>#weather-chip{grid-column:2;grid-row:1}
+ .top-actions:has(#fullscreen-enter[hidden])>#weather-chip{grid-column:1/3}
+}
+@media(max-width:420px){
+ .usage-heading{flex-wrap:nowrap;gap:6px}
+ .usage-heading .top-actions{min-width:0;gap:5px;grid-template-columns:auto minmax(0,1fr) auto}
+ [data-theme=orbit] .usage-heading .top-actions{grid-template-columns:auto minmax(0,1fr) auto}
+ .usage-heading #weather-chip{min-width:0;max-width:100%}
+ .usage-heading .weather-chip-place,.usage-heading .weather-chip-condition{display:none}
+ .usage-heading .settings summary span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}

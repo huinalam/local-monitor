@@ -1,0 +1,105 @@
+.real-sky{display:none}
+#weather-chip{font-size:11px;padding:2px 5px;white-space:nowrap;border-color:transparent;color:var(--ink);background:var(--paper)}
+#weather-settings{border-block:1px solid var(--line);padding:10px 0;margin:10px 0;font-size:12px}
+#weather-settings label{display:block;margin:8px 0 4px}
+#weather-city{width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--line);padding:5px}
+#weather-settings p{font-size:11px;margin:8px 0;line-height:1.5}
+#weather-settings a{text-decoration:underline}
+.settings-body{max-height:calc(100dvh - 55px);overflow:auto}
+:root[data-theme="real"]{color-scheme:dark;--sky-top:#152548;--sky-bottom:#304c77;--weather-cloud:#647897;--orb:#fff1be}
+[data-theme="real"] body{background:linear-gradient(var(--sky-top),var(--sky-bottom));background-attachment:fixed}
+:root[data-theme="real"][data-sky="day"]{--sky-top:#153f52;--sky-bottom:#20334b;--weather-cloud:#708d9f;--orb:#ffdc67}
+:root[data-theme="real"][data-sky="dawn"]{--sky-top:#37304b;--sky-bottom:#533f48;--weather-cloud:#918797;--orb:#f4cd87}
+:root[data-theme="real"][data-sky="dusk"]{--sky-top:#302944;--sky-bottom:#5a3b42;--weather-cloud:#91808d;--orb:#edb57f}
+:root[data-theme="real"][data-weather="cloudy"],:root[data-theme="real"][data-weather="fog"],:root[data-theme="real"][data-weather="rain"],:root[data-theme="real"][data-weather="snow"],:root[data-theme="real"][data-weather="storm"]{--weather-cloud:#8b9eb4}
+:root[data-theme="real"][data-sky="day"]:is([data-weather="cloudy"],[data-weather="fog"],[data-weather="rain"],[data-weather="snow"],[data-weather="storm"]){--sky-top:#293947;--sky-bottom:#384655}
+[data-theme="real"] .usage-card,[data-theme="real"] .sessions-panel,[data-theme="real"] .activity-panel{background:var(--paper)}
+[data-theme="real"] :is(#clock,.usage-card h3,.usage-window-title strong){text-shadow:none}
+[data-theme="real"] .usage-progress::-webkit-progress-value{background:repeating-linear-gradient(90deg,var(--blue) 0 10px,var(--track) 10px 12px)}
+[data-theme="real"] .usage-progress::-moz-progress-bar{background:repeating-linear-gradient(90deg,var(--blue) 0 10px,var(--track) 10px 12px)}
+[data-theme="real"]:not([data-sky="night"]) :is(.night-sky,.night-anchor,.night-meteors){display:none}
+[data-theme="real"]:not([data-weather="clear"]) .night-meteors{display:none}
+[data-theme="real"]:is([data-weather="cloudy"],[data-weather="fog"],[data-weather="rain"],[data-weather="snow"],[data-weather="storm"],[data-weather="unknown"]) :is(.night-sky,.night-anchor){opacity:.18}
+[data-theme="real"] .real-sky{display:block;position:fixed;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.real-orb{position:absolute;left:43%;top:1px;width:36px;height:36px;fill:var(--orb);filter:drop-shadow(0 0 6px #ffdf7866)}
+.real-moon{display:none}
+[data-sky="night"] .real-sun{display:none}
+[data-sky="night"] .real-moon{display:block}
+[data-theme="real"] .anchor-2{display:none}
+[data-weather="cloudy"] .real-orb,[data-weather="rain"] .real-orb,[data-weather="snow"] .real-orb,[data-weather="fog"] .real-orb,[data-weather="storm"] .real-orb{opacity:.35}
+.real-cloud{position:absolute;width:110px;height:27px;background:var(--weather-cloud);clip-path:polygon(0 50%,12% 50%,12% 28%,25% 28%,25% 0,60% 0,60% 20%,80% 20%,80% 45%,100% 45%,100% 100%,0 100%);opacity:.8;animation:weather-drift 24s ease-in-out infinite alternate}
+.c1{left:23%;top:7px}.c2{left:56%;top:8px;animation-delay:-12s}.c3{left:calc(100% - 45px);top:53%;animation-delay:-6s}
+[data-weather="clear"] .real-cloud,[data-weather="unknown"] .real-cloud{display:none}
+[data-weather="partly"] .c3{display:none}
+.real-fog{display:none;position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 130px,#cad7e633 150px 165px,transparent 190px)}
+[data-weather="fog"] .real-fog{display:block}
+.real-particles{display:none;position:absolute;inset:0}
+[data-weather="rain"] .real-particles,[data-weather="snow"] .real-particles,[data-weather="storm"] .real-particles{display:block}
+.real-particles i{position:absolute;left:8px;top:-12px;width:2px;height:9px;background:#88cced;animation:weather-fall 3.7s linear infinite}
+.real-particles i:nth-child(even){left:auto;right:8px;animation-delay:-1.3s}
+.real-particles i:nth-child(3n){left:34%;animation-delay:-2.6s;animation-duration:4.3s}
+.real-particles i:nth-child(4n){left:66%;animation-delay:-.7s;animation-duration:3.2s}
+.real-particles i:nth-child(5n){left:95%;animation-delay:-1.9s;animation-duration:5s}
+[data-weather="snow"] .real-particles i{width:4px;height:4px;background:#fff;box-shadow:0 0 1px #8ba2b4;animation-duration:12s}
+.real-lightning{display:none;position:absolute;right:6px;top:30%;font:bold 22px "NeoDunggeunmo",monospace;color:#ffdb72}
+[data-weather="storm"] .real-lightning{display:block}
+@keyframes weather-drift{from{transform:translateX(-12px)}to{transform:translateX(14px)}}
+@keyframes weather-fall{from{transform:translateY(0)}to{transform:translateY(calc(100dvh + 20px))}}
+@media(max-width:800px){.real-orb{left:calc(100% - 25px);top:40%;width:30px;height:30px}.c1{left:-45px;top:18%}.c2{left:calc(100% - 60px);top:65%}.c3{left:-55px;top:82%}[data-theme="real"] .usage-heading{flex-wrap:wrap;gap:5px}[data-theme="real"] .usage-heading .top-actions{gap:5px}#weather-chip{font-size:10px;padding:2px}}
+@media(prefers-reduced-motion:reduce){.real-cloud,.real-particles i{animation:none}.real-particles i{top:30%}.real-particles i:nth-child(even){top:65%}}
+[data-theme="real"] .usage-card h3{color:var(--ink)}
+
+[data-theme="real"] .star-status.completed .star-effect{animation:none;color:var(--green);font-size:16px;letter-spacing:0}
+[data-theme="real"] .star-status.running .star-effect{color:var(--blue)}
+
+/* Daytime clouds cross the exposed sky; clear-day wisps are decorative. */
+[data-theme="real"][data-sky="day"] .real-cloud{display:block;left:-200px;width:120px;height:27px;opacity:.48;animation:day-cloud-pass var(--cloud-period) linear infinite;animation-delay:var(--cloud-offset)}
+[data-theme="real"][data-sky="day"] .c1{top:2px;--cloud-period:46s;--cloud-offset:-12s;--cloud-rest:calc(200px + 18vw)}
+[data-theme="real"][data-sky="day"] .c2{top:9px;--cloud-period:63s;--cloud-offset:-37s;--cloud-rest:calc(200px + 49vw)}
+[data-theme="real"][data-sky="day"] .c3{top:16px;--cloud-period:79s;--cloud-offset:-64s;--cloud-rest:calc(200px + 76vw)}
+[data-theme="real"][data-sky="day"][data-weather="clear"] .real-cloud{width:76px;height:19px;opacity:.23}
+[data-theme="real"][data-sky="day"][data-weather="clear"] .c3{display:none}
+[data-theme="real"][data-sky="day"]:is([data-weather="cloudy"],[data-weather="rain"],[data-weather="snow"],[data-weather="storm"]) .real-cloud{width:166px;height:32px;opacity:.65}
+[data-theme="real"][data-sky="day"]:is([data-weather="fog"],[data-weather="unknown"]) .real-cloud{display:none}
+@keyframes day-cloud-pass{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 400px))}}
+@media(prefers-reduced-motion:reduce){[data-theme="real"][data-sky="day"] .real-cloud{animation:none;transform:translateX(var(--cloud-rest))}}
+
+/* Compact HUD: health warnings grow to the left of the stable controls. */
+.usage-heading .top-actions{gap:9px}
+.usage-heading #weather-chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:3px 8px;border:1px solid var(--line);border-radius:7px;background:color-mix(in srgb,var(--paper) 85%,transparent);color:var(--blue);font-size:11px}
+.weather-pixel{width:16px;height:16px;flex:none;shape-rendering:crispEdges}
+.usage-heading #clock{width:auto;flex:none;white-space:nowrap;text-align:left;font:600 13px/26px "NeoDunggeunmo",monospace;font-variant-numeric:tabular-nums;color:var(--ink);text-shadow:none}
+.settings>summary{display:flex;align-items:center;gap:6px;height:26px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;list-style:none;color:var(--blue);background:var(--paper);font-size:11px}
+.settings>summary::-webkit-details-marker{display:none}
+.settings>summary:hover,.settings[open]>summary{background:var(--selected)}
+.settings-icon{width:12px;height:12px;shape-rendering:crispEdges}
+.settings-body{top:32px}
+.usage-heading .connection.offline{font-size:11px;color:var(--amber);gap:5px}
+.usage-heading .connection.offline i{width:8px;height:10px;border-radius:0;background:currentColor;clip-path:polygon(0 70%,20% 70%,20% 100%,0 100%,0 70%,40% 35%,60% 35%,60% 100%,40% 100%,40% 35%,80% 0,100% 0,100% 100%,80% 100%,80% 0)}
+:is([data-theme="rpg"],[data-theme="night"],[data-theme="real"],[data-theme="cloud"]) .top-actions :is(#weather-chip,.settings>summary){border-radius:2px;box-shadow:1px 2px #10142d55}
+@media(max-width:650px){
+ .usage-heading{flex-wrap:wrap;align-items:center}
+ .usage-heading .top-actions{display:grid;grid-template-columns:auto auto auto;gap:5px 8px}
+ #weather-chip{grid-column:1;grid-row:1}.top-actions>.settings{grid-column:3;grid-row:1}
+ .top-actions>#connection{grid-column:1/-1;grid-row:2;justify-self:end}
+ .usage-heading #weather-chip{max-width:155px;overflow:hidden;text-overflow:ellipsis;font-size:10px;padding:3px 5px}
+}
+
+/* Color belongs to the icon, leaving the place and temperature text unchanged. */
+.weather-pixel{color:#aab8cc}
+.weather-pixel[data-shape="sun"]{color:#ffda70}
+.weather-pixel[data-shape="moon"]{color:#d4baff}
+.weather-pixel[data-shape="cloud"]{color:#b5dcf5}
+.weather-pixel[data-shape="rain"]{color:#78c9ff}
+.weather-pixel[data-shape="snow"]{color:#ddf8ff}
+[data-weather="fog"] .weather-pixel{color:#b5c3d5}
+[data-weather="storm"] .weather-pixel{color:#f5bf72}
+
+
+#system-chip.system-alert{color:var(--amber)}
+.system-setting{display:block;font-size:12px;margin:10px 0}
+#system-dialog{width:420px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 32px);overflow:auto;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:18px}
+#system-dialog::backdrop{background:#080d20aa}
+.system-values{display:grid;grid-template-columns:1fr auto;gap:14px;font-size:12px}.system-values dt{color:var(--muted)}.system-values dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+:is([data-theme="rpg"],[data-theme="night"],[data-theme="real"],[data-theme="cloud"]) :is(#system-chip,#system-dialog){border-radius:2px}
+@media(max-width:650px){.usage-heading .top-actions{grid-template-columns:auto auto auto}.top-actions>#connection{grid-row:3}}

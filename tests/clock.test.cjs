@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+let mono=0,wall=2000000014000;
+const context={window:{},performance:{now:()=>mono},Date:{now:()=>wall}};
+vm.createContext(context);vm.runInContext(fs.readFileSync('local_monitor/web/clock.js','utf8'),context);
+const clock=context.window.LocalMonitorClock.create();
+assert.equal(clock.now(),null);assert.equal(clock.age(1000),null);
+clock.sync(1000,600);assert.equal(clock.age(999),1.2999999999999545);
+mono+=2000;const age=clock.age(999);wall+=3600000;assert.equal(clock.age(999),age);
+wall-=7200000;assert.equal(clock.age(999),age);
+clock.observe(990);assert.equal(clock.age(999),age,'delayed SSE cannot reset freshness');
+clock.observe(1005);assert.equal(clock.age(999),6);
+mono+=16000;assert(clock.age(999)>15,'genuine stalled collection ages despite heartbeats');
+clock.observe(1000);assert(clock.age(999)>15);
+clock.sync(900,0,'http_date');assert.equal(clock.now(),900);assert.equal(clock.mode,'http_date');
+clock.sync(NaN);clock.observe(null);assert.equal(clock.now(),900);
+clock.sync(1000,NaN);assert.equal(clock.now(),1000);assert.equal(clock.age(1001),0);
+assert.equal(clock.age(null),null);assert.equal(clock.age(Infinity),null);
+console.log('Clock tests passed: skew, wall jumps, latency, delayed SSE, true staleness, fallback, recalibration, invalid inputs.');

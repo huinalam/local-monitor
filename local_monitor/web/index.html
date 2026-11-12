@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Local Monitor · 현황판</title><link rel="preload" href="/fonts/neodgm.woff2" as="font" type="font/woff2" crossorigin><script src="/theme.js"></script><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/weather.css"><script src="/weather.js" defer></script><script src="/diagnostics.js" defer></script><script src="/clock.js" defer></script><link rel="stylesheet" href="/workshop.css"><script src="/workshop.js" defer></script><script src="/folder-board.js" defer></script><script src="/app.js" defer></script></head>
+<body>
+<div class="real-sky" aria-hidden="true"><svg class="real-orb" viewBox="0 0 40 40" shape-rendering="crispEdges"><path class="real-sun" d="M16 2h8v5h6v5h5v6h3v8h-5v6h-6v5H13v-5H7v-6H2V14h5V8h9z"/><path class="real-moon" d="M18 3H11v4H7v5H3v16h4v5h6v4h16v-4h6v-6h-9v-4h-6v-6h-3V9z"/></svg><div class="real-cloud c1"></div><div class="real-cloud c2"></div><div class="real-cloud c3"></div><div class="real-fog"></div><div class="real-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="real-lightning">ϟ</span></div>
+<div class="night-meteors" aria-hidden="true"><span class="night-meteor"></span><span class="night-meteor"></span></div>
+<svg class="cloud-sky" aria-hidden="true" focusable="false" viewBox="0 0 1024 768" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+<g transform="translate(125 34) scale(0.55)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(780 35) scale(0.55)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(-55 170) scale(1.4)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(948 350) scale(1.3)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(310 241) scale(0.55)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(810 573) scale(0.55)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<g transform="translate(-42 576) scale(1)"><path fill="#dffaff" stroke="#313658" stroke-width="3" d="M0 36h10V24h16V12h16V0h30v10h16v14h20v12h12v20H0z"/><path fill="#90d0e1" d="M2 42h14v6h18v-8h14v8h28v-6h18v6h24v6H2z"/><path fill="#fffdf0" d="M30 24V14h14V3h24v10h10v14H30z"/></g>
+<path fill="#a6df8d" stroke="#3a6153" stroke-width="3" d="M0 736h24v-12h28v8h32v12h30v-8h44v10h56v-14h24v-10h32v12h50v10h68v-10h48v8h50v-20h34v-8h36v14h34v16h60v-10h38v8h54v-10h40v-12h28v12h34v12h80v-12h26v-10h28v10h36v-10h34v48H0z"/>
+<path fill="#6ab67f" d="M0 758h50v-6h30v6h100v-8h32v8h132v-6h36v6h118v-8h32v8h130v-6h44v6h116v-8h30v8h174v10H0z"/></svg>
+<svg class="night-sky" aria-hidden="true" focusable="false" viewBox="0 0 1024 768" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+
+
+<rect x="782" y="208" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="530" y="548" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="28" y="422" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="504" y="176" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="758" y="550" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="682" y="82" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="898" y="368" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="48" y="70" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="190" y="364" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="192" y="310" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="116" y="378" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="354" y="596" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="306" y="598" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="392" y="488" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="504" y="248" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="24" y="270" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="792" y="596" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="412" y="206" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="344" y="558" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="456" y="690" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="604" y="592" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="578" y="14" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="804" y="308" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="314" y="548" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="1004" y="370" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="548" y="286" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="514" y="518" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="66" y="210" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="494" y="510" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="718" y="82" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="764" y="606" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="940" y="736" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="228" y="130" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="334" y="630" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="800" y="170" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="806" y="528" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="150" y="410" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="254" y="176" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="492" y="480" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="394" y="290" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="278" y="544" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="144" y="44" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="580" y="140" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="834" y="542" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="136" y="12" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="102" y="438" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="318" y="444" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="296" y="726" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="954" y="116" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="378" y="112" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="536" y="406" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="190" y="258" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="700" y="526" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="96" y="598" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="882" y="746" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="550" y="338" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="46" y="362" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="36" y="564" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="6" y="690" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="360" y="78" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="638" y="156" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="304" y="132" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="622" y="546" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="244" y="218" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="126" y="722" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="384" y="306" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="160" y="684" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="1016" y="638" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="874" y="52" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="816" y="508" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="314" y="658" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="914" y="356" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="530" y="226" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="270" y="92" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="454" y="648" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="994" y="234" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="826" y="610" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="654" y="556" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="242" y="758" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="886" y="160" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="664" y="22" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="50" y="264" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="286" y="588" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="606" y="512" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="316" y="614" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="134" y="746" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="350" y="16" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="820" y="474" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="352" y="52" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="630" y="126" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="972" y="542" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="372" y="98" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="196" y="28" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="698" y="344" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="156" y="398" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="900" y="444" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="890" y="516" width="4" height="4" fill="#64d6ef" opacity=".65"/>
+<rect x="316" y="180" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="906" y="624" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="822" y="178" width="4" height="4" fill="#e6eaff" opacity=".65"/>
+<rect x="104" y="248" width="2" height="2" fill="#a979ff" opacity=".65"/>
+<rect x="118" y="402" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="180" y="742" width="4" height="4" fill="#ffd46c" opacity=".65"/>
+<rect x="102" y="10" width="2" height="2" fill="#f5ace0" opacity=".65"/>
+<rect x="530" y="194" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<rect x="842" y="174" width="4" height="4" fill="#a979ff" opacity=".65"/>
+<rect x="334" y="614" width="2" height="2" fill="#64d6ef" opacity=".65"/>
+<rect x="40" y="392" width="2" height="2" fill="#ffd46c" opacity=".65"/>
+<rect x="390" y="392" width="4" height="4" fill="#f5ace0" opacity=".65"/>
+<rect x="784" y="62" width="2" height="2" fill="#e6eaff" opacity=".65"/>
+<g transform="translate(10 437) scale(2)" fill="#ffdb70"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g><g transform="translate(1009 557) scale(2)" fill="#c781ff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g><g transform="translate(10 680) scale(2)" fill="#6adeff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g><g transform="translate(220 269) scale(2)" fill="#b981ff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g><g transform="translate(672 601) scale(2)" fill="#77e6ff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g></svg>
+<svg class="night-anchor anchor-1" aria-hidden="true" focusable="false" viewBox="-28 -28 56 56" xmlns="http://www.w3.org/2000/svg"><defs><filter id="anchor-glow-0" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><circle class="sky-halo" r="11" fill="#bc86ff" filter="url(#anchor-glow-0)"/><g transform="scale(2)" fill="#ab69ff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g></svg><svg class="night-anchor anchor-2" aria-hidden="true" focusable="false" viewBox="-28 -28 56 56" xmlns="http://www.w3.org/2000/svg"><defs><filter id="anchor-glow-1" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><circle class="sky-halo" r="11" fill="#75e7ff" filter="url(#anchor-glow-1)"/><g transform="scale(2)" fill="#67e2ff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g></svg><svg class="night-anchor anchor-3" aria-hidden="true" focusable="false" viewBox="-28 -28 56 56" xmlns="http://www.w3.org/2000/svg"><defs><filter id="anchor-glow-2" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><circle class="sky-halo" r="15" fill="#ffd269" filter="url(#anchor-glow-2)"/><g transform="scale(3)" fill="#ffd269"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g></svg><svg class="night-anchor anchor-4" aria-hidden="true" focusable="false" viewBox="-28 -28 56 56" xmlns="http://www.w3.org/2000/svg"><defs><filter id="anchor-glow-3" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter></defs><circle class="sky-halo" r="11" fill="#75e7ff" filter="url(#anchor-glow-3)"/><g transform="scale(2)" fill="#68dbff"><path d="M-1-6h2v4h2v1h3v2h-3v1h-2v4h-2v-4h-2v-1h-3v-2h3v-1h2z"/><path fill="#fff7dc" d="M-1-2h2v1h1v2h-1v1h-2v-1h-1v-2h1z"/></g></svg>
+
+<main>
+<div id="warning" role="status" hidden></div>
+<section class="usage-section" aria-label="날짜와 설정"><div class="usage-heading"><time id="clock" aria-label="한국 날짜와 시간"></time><div class="top-actions"><button id="fullscreen-enter" type="button" title="전체화면으로 보기 · Esc 키로 나가기">전체화면</button><button id="weather-chip" type="button" hidden aria-label="날씨 설정"></button><span id="connection" class="connection" role="status" hidden></span>
+<details class="settings"><summary><svg class="settings-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M6 0h4v3h3v3h3v4h-3v3h-3v3H6v-3H3v-3H0V6h3V3h3z M6 6v4h4V6z"/></svg><span>설정</span></summary><div class="settings-body"><button id="workshop-all" type="button" aria-pressed="true">전체 도구</button><button id="workshop-open" type="button" aria-haspopup="dialog">작업 일지 ↗</button><button id="refresh" class="settings-refresh" type="button">새로고침</button><div class="fullscreen-setting"><button id="fullscreen" type="button" aria-pressed="false" aria-describedby="fullscreen-note">전체 화면</button><p id="fullscreen-note" role="status">Esc 키로 전체 화면을 나갈 수 있어요.</p></div><label class="theme-setting" for="theme">화면 테마<select id="theme"><option value="light">라이트</option><option value="dark">다크</option><option value="orbit">네온 오비트</option><option value="rpg">8비트 RPG</option><option value="night">밤하늘 8비트</option><option value="real">리얼 하늘 8비트</option><option value="cloud">구름섬 8비트</option><option value="system">시스템 설정</option></select></label><div id="weather-settings" hidden><strong id="weather-place"></strong><label for="weather-city">날씨 위치</label><select id="weather-city"><option value="default">서울 · 기본 위치</option><option value="current" disabled>현재 위치</option><option value="seoul">서울</option><option value="busan">부산</option><option value="incheon">인천</option><option value="daejeon">대전</option><option value="daegu">대구</option><option value="gwangju">광주</option><option value="jeju">제주</option><option value="gangneung">강릉</option></select><p>현재 위치 사용 시 대략적인 좌표를 Open-Meteo에 전달해요. 위치를 얻지 못하면 서울을 사용해요.</p><button id="weather-locate" type="button">현재 위치 사용</button><p id="weather-status" role="status"></p><p><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">날씨: Open-Meteo</a> · 기상 모델 기반 · 15분 갱신</p></div><label class="system-setting"><input id="show-system" type="checkbox" checked> 시스템 카드 표시</label><button id="diagnostics-download" type="button">진단 로그 내려받기</button><button id="diagnostics-clear" type="button">진단 로그 지우기</button>
+<p id="diagnostics-note">연결·지연 진단값을 서버로 보내 최대 7일·1만 건 보관해요. 대화 내용과 로그인 정보는 기록하지 않아요. 내려받기·지우기는 이 브라우저의 기록에 적용돼요.</p>
+<button id="notifications">브라우저 알림 켜기</button><p id="permission-note"></p><p>세션 5초 감지 · 계정 사용량 5분 조회<br>Antigravity 작업은 hook으로 감지합니다.</p></div></details></div></div></section>
+<section class="workshop-panel" aria-label="작업 현황">
+<div class="workshop-workspace"><aside id="monitor-grid" class="workshop-sidebar monitor-grid integrated-sidebar" aria-label="도구와 사용량"><div id="usage" hidden></div><div id="workshop-grid" class="workshop-grid"></div><button id="system-chip" class="system-card" type="button" aria-haspopup="dialog" aria-label="이 Mac의 CPU·메모리·스왑 상세"><span class="system-heading"><strong>SYSTEM</strong><span id="system-state">수집 중</span></span><span id="system-graphs"></span><span id="system-history-note">최근 30분 · 10초 평균</span></button></aside><section id="folder-board" class="folder-board" aria-label="폴더별 작업"></section></div>
+
+</section>
+
+</main>
+<dialog id="workshop-dialog" aria-labelledby="workshop-dialog-title"><div class="workshop-dialog-heading"><h2 id="workshop-dialog-title">작업 일지</h2><button id="workshop-close" type="button" aria-label="작업 일지 닫기">✕</button></div>
+<div class="workshop-views"><button id="journal-sessions" type="button">세션</button><button id="journal-completed" type="button">최근 30분 완료</button></div>
+<p id="workshop-journal-note"></p><section id="session-preview-detail" hidden aria-label="대화 메시지와 선택지"></section><section class="sessions-panel" aria-label="작업 현황">
+<div class="section-heading"><div class="summary-counts"><button data-filter="active" class="selected">작업 중 <b id="count-active">—</b></button><button data-filter="attention">확인 필요 <b id="count-attention">—</b></button></div><span id="updated" class="muted"></span><button id="details-toggle" aria-expanded="true" aria-controls="session-tools">검색·필터</button></div>
+<div id="session-tools"><div class="toolbar"><button data-filter="running">진행 중</button><button data-filter="active">진행·최근 완료</button><button data-filter="all">전체 기록 <span id="session-count">0</span></button><input id="search" type="search" placeholder="대화 또는 프로젝트 검색" aria-label="대화 또는 프로젝트 검색"></div><div class="provider-filters"><button data-provider="all" class="selected">모든 도구</button><button data-provider="codex">Codex</button><button data-provider="claude">Claude Code</button><button data-provider="antigravity">Antigravity</button><span id="filter-label"></span></div></div>
+<div class="table-head"><span>도구 · 프로젝트 / 작업</span><span>상태</span><span>최근 활동</span></div>
+<div id="sessions" class="session-list"><div class="empty">세션 조회 중</div></div>
+
+</section></dialog>
+<div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+<dialog id="usage-dialog" aria-labelledby="usage-dialog-title"><div class="usage-dialog-heading"><h2 id="usage-dialog-title">사용량 상세</h2><button id="usage-dialog-close" type="button" aria-label="사용량 상세 닫기">✕</button></div><div id="usage-dialog-content"></div></dialog>
+<dialog id="system-dialog" aria-labelledby="system-title"><div class="usage-dialog-heading"><h2 id="system-title">이 Mac의 시스템 상태</h2><button id="system-close" aria-label="시스템 상태 닫기">✕</button></div><div id="system-content"></div></dialog></body></html>

@@ -1,0 +1,1 @@
+{"name":"local-monitor-preview-summary","private":true,"type":"module","scripts":{"start":"node worker.mjs"},"dependencies":{"@openai/codex-sdk":"0.167.0"}}

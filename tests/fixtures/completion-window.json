@@ -1,0 +1,12 @@
+[
+ {"now":1000,"mono":0,"events":[],"count":0,"partial":true},
+ {"now":1005,"mono":5,"events":[{"id":"x:1","provider":"codex","session_id":"a","turn_id":"1","at":1004,"title":"one","cwd":"/test"},{"id":"x:2","provider":"claude","session_id":"a","turn_id":"1","at":1005}],"count":2,"partial":true},
+ {"now":1010,"mono":10,"events":[{"id":"x:3","provider":"codex","session_id":"a","turn_id":"1","at":1004},{"id":"x:4","provider":"codex","session_id":"a","turn_id":"2","at":1009}],"count":3,"partial":true},
+ {"now":1015,"mono":15,"events":[{"id":"x:5","provider":"codex","session_id":"b","turn_id":"1","at":1016}],"count":3,"partial":true,"reason":"invalid_event"},
+ {"now":1020,"mono":20,"healthy":false,"count":3,"partial":true,"reason":"collector_gap"},
+ {"now":1025,"mono":25,"count":3,"partial":true,"coverage":1025},
+ {"now":2804,"mono":1804,"count":2,"partial":true,"reason":"collector_gap"},
+ {"now":2805,"mono":1805,"count":1,"partial":true},
+ {"now":2809,"mono":1809,"count":0,"partial":true},
+ {"now":1500,"mono":1810,"count":0,"partial":true,"reason":"clock_jump"}
+]
